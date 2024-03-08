@@ -2,6 +2,7 @@
 
 use App\Action\HelperAction;
 use App\Http\Controllers\Api\v1\Admin\CategoryController;
+use App\Http\Controllers\Api\v1\Admin\Product\ProductController;
 use App\Http\Controllers\Api\v1\Admin\SubCategoryController;
 use App\Http\Controllers\Api\v1\Auth\AuthController;
 use App\Http\Controllers\Api\v1\User\UserController;
@@ -30,20 +31,18 @@ Route::prefix('v1')->group(function () {
     Route::post('send-reset-password-code', [AuthController::class, 'sendResetPasswordCodeToMail']);
     Route::post('check-reset-password-code', [AuthController::class, 'checkResetCodeValidity']);
     Route::post('reset-password', [AuthController::class, 'resetPassword']);
-
     Route::get('category-list',[WebController::class,'categories']);
-
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('verify-user', [AuthController::class, 'checkVerificationCodeValidity']);
         Route::get('profile', [UserController::class, 'profile']);
         Route::post('profile-update', [UserController::class, 'profileUpdate']);
-
         Route::middleware(['checkUserRole:super_admin'])->group(function () {
             Route::resource('categories', CategoryController::class);
             Route::resource('sub-categories', SubCategoryController::class);
             Route::resource('users', UserController::class);
-
         });
+        Route::resource('products', ProductController::class);
+
         Route::get('signout', function () {
             auth()->user()->currentAccessToken()->delete();
             return HelperAction::successResponse('Successfully Logout', null);

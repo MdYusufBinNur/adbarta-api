@@ -11,7 +11,7 @@ class StoreRequest extends BaseRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
@@ -25,7 +25,7 @@ class StoreRequest extends BaseRequest
             'location' => 'required',
             'price' => 'required',
             'image' => 'required|array',
-            'image.*' => 'mimes|jpg,png',
+            'image.*' => 'mimes:jpg,png',
             'authenticity' => '',
             'edition' => '',
             'brand' => '',
