@@ -9,13 +9,17 @@ use Intervention\Image\Facades\Image;
 
 class HelperAction
 {
-    const APP_NME = 'Bröllopsguiden';
+    const APP_NME = 'ADBARTA';
     const ROLE_VENDOR = 'vendor';
     const ROLE_USER = 'user';
     const ROLE_ADMIN = 'admin';
     const APP_LOCAL_LANG = 'sv';
     const VENDOR_STATUS_APPROVED = 'approved';
     const LOCAL_IMAGE_URL = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOH2aZnIHWjMQj2lQUOWIL2f4Hljgab0ecZQ&usqp=CAU';
+    const PRODUCT_STATUS_APPROVED = 'approved';
+    const PRODUCT_STATUS_SOLD = 'sold';
+    const PRODUCT_STATUS_NOT_APPROVED = 'not_approved';
+    const PRODUCT_STATUS_NOT_PENDING = 'pending';
 
     public static function validationResponse($message): \Illuminate\Http\JsonResponse
     {

@@ -48,4 +48,6 @@ Route::prefix('v1')->group(function () {
             return HelperAction::successResponse('Successfully Logout', null);
         });
     });
+    Route::get('get-ads', [WebController::class,'allAds']);
+    Route::get('get-ads/{slug}', [WebController::class,'adDetails']);
 });
