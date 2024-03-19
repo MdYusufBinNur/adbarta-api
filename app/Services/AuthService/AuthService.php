@@ -42,7 +42,7 @@ class AuthService
         $data['email'] = $request->email;
         $data['password'] = bcrypt($request->password);
         $data['role'] = 'seller';
-        $data['remember_token'] = rand(111111, 999999);
+        $data['remember_token'] = rand(1111, 9999);
         try {
             DB::beginTransaction();
             $user = User::query()->create($data);
@@ -95,7 +95,7 @@ class AuthService
                 ],
                 [
                     'email' => $request->email,
-                    'token' => rand(111111, 999999)
+                    'token' => rand(1111, 9999)
                 ]);
             dispatch(new SendResetPasswordCodeJob($user->id));
             DB::commit();
