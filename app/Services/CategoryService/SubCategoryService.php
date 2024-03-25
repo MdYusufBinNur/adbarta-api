@@ -25,19 +25,8 @@ class SubCategoryService
             } else {
                 $query->latest();
             }
-            $responseData = $query->paginate($count);
-            $paginationData = [
-                'count' => $responseData->count(),
-                'current_page' => $responseData->currentPage(),
-                'next_page_url' => $responseData->nextPageUrl(),
-                'last_page' => $responseData->lastPage(),
-                'prev_page_url' => $responseData->previousPageUrl(),
-                'per_page' => $responseData->perPage(),
-                'total' => $responseData->total(),
-                'total_page' => ceil($responseData->total() / $responseData->perPage()),
-                'next_page' => $responseData->currentPage() + 1 <= $responseData->lastPage() ? $responseData->currentPage() + 1 : $responseData->lastPage(),
-                'prev_page' => $responseData->currentPage() - 1 < 0 ? $responseData->currentPage() : $responseData->currentPage() - 1,
-            ];
+            $responseData = $query->with('category')->paginate($count);
+            $paginationData = HelperAction::paginationMetaData($responseData);
             $finalDataset = [
                 'sub_categories' => $responseData->items(),
                 'pagination' => $paginationData,
@@ -58,7 +47,7 @@ class SubCategoryService
             }
             $createCategory = SubCategory::query()->create($data);
             DB::commit();
-            return HelperAction::serviceResponse(false, 'Category added', $createCategory->fresh());
+            return HelperAction::serviceResponse(false, 'Category added', $createCategory->fresh('category'));
         } catch (Exception $e) {
             DB::rollBack();
             return HelperAction::serviceResponse(true, $e->getMessage(), null);
@@ -78,7 +67,7 @@ class SubCategoryService
             }
             $update = $Category->updateOrFail($data);
             DB::commit();
-            return HelperAction::serviceResponse(false, 'Sub Category updated', $Category->fresh());
+            return HelperAction::serviceResponse(false, 'Sub Category updated', $Category->fresh('category'));
         } catch (Exception $e) {
             DB::rollBack();
             return HelperAction::serviceResponse(true, $e->getMessage(), null);
@@ -86,15 +75,16 @@ class SubCategoryService
         }
     }
 
+
+    /**
+     * @throws Throwable
+     */
     public function destroy($id): array
     {
-        try {
-            $check = SubCategory::query()->findOrFail($id);
-            $check->deleteOrFail();
-            return HelperAction::serviceResponse(false, 'Category deleted', null);
-        } catch (Throwable $exception) {
-            return HelperAction::serviceResponse(true, $exception->getMessage(), null);
-        }
+        $check = SubCategory::query()->findOrFail($id);
+        $check->deleteOrFail();
+        return HelperAction::serviceResponse(false, 'Category deleted', null);
+
     }
 
 }
