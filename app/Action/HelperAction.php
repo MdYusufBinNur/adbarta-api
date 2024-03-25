@@ -21,6 +21,21 @@ class HelperAction
     const PRODUCT_STATUS_NOT_APPROVED = 'not_approved';
     const PRODUCT_STATUS_NOT_PENDING = 'pending';
 
+    public static function paginationMetaData($responseData): array
+    {
+        return [
+            'count' => $responseData->count(),
+            'current_page' => $responseData->currentPage(),
+            'next_page_url' => $responseData->nextPageUrl(),
+            'last_page' => $responseData->lastPage(),
+            'prev_page_url' => $responseData->previousPageUrl(),
+            'per_page' => $responseData->perPage(),
+            'total' => $responseData->total(),
+            'total_page' => ceil($responseData->total() / $responseData->perPage()),
+            'next_page' => $responseData->currentPage() + 1 <= $responseData->lastPage() ? $responseData->currentPage() + 1 : $responseData->lastPage(),
+            'prev_page' => $responseData->currentPage() - 1 < 0 ? $responseData->currentPage() : $responseData->currentPage() - 1,
+        ];
+    }
     public static function validationResponse($message): \Illuminate\Http\JsonResponse
     {
         return response()->json(

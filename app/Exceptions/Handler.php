@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -71,6 +72,22 @@ class Handler extends ExceptionHandler
 
         $this->renderable(function (\InvalidArgumentException $e, $request) {
             return response()->json((['error' => true, 'message' => $e->getMessage()]), 403);
+        });
+
+        $this->renderable(function (QueryException $e, $request) {
+            $errorCode = $e->errorInfo[1];
+            return match ($errorCode) {
+                1451 => response()->json([
+                    'error' => true,
+                    'message' => 'Cannot delete or update a parent ID: a foreign key constraint fails',
+                    'data' => null
+                ], 422),
+                default => response()->json([
+                    'error' => true,
+                    'message' => 'An error occurred while processing your request',
+                    'data' => null
+                ], 500),
+            };
         });
     }
 }

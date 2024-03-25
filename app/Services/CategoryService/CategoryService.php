@@ -26,18 +26,7 @@ class CategoryService
                 $query->latest();
             }
             $responseData = $query->paginate($count);
-            $paginationData = [
-                'count' => $responseData->count(),
-                'current_page' => $responseData->currentPage(),
-                'next_page_url' => $responseData->nextPageUrl(),
-                'last_page' => $responseData->lastPage(),
-                'prev_page_url' => $responseData->previousPageUrl(),
-                'per_page' => $responseData->perPage(),
-                'total' => $responseData->total(),
-                'total_page' => ceil($responseData->total() / $responseData->perPage()),
-                'next_page' => $responseData->currentPage() + 1 <= $responseData->lastPage() ? $responseData->currentPage() + 1 : $responseData->lastPage(),
-                'prev_page' => $responseData->currentPage() - 1 < 0 ? $responseData->currentPage() : $responseData->currentPage() - 1,
-            ];
+            $paginationData = HelperAction::paginationMetaData($responseData);
             $finalDataset = [
                 'categories' => $responseData->items(),
                 'pagination' => $paginationData,
@@ -86,15 +75,14 @@ class CategoryService
         }
     }
 
+    /**
+     * @throws Throwable
+     */
     public function destroy($id): array
     {
-        try {
-            $check = Category::query()->findOrFail($id);
-            $check->deleteOrFail();
-            return HelperAction::serviceResponse(false, 'Category deleted', null);
-        } catch (Throwable $exception) {
-            return HelperAction::serviceResponse(true, $exception->getMessage(), null);
-        }
+        $check = Category::query()->findOrFail($id);
+        $check->deleteOrFail();
+        return HelperAction::serviceResponse(false, 'Category deleted', null);
     }
 
 }
