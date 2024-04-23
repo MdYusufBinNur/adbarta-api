@@ -7,6 +7,7 @@ use App\Http\Resources\Categories\CategoryResource;
 use App\Models\Category;
 use App\Models\District;
 use App\Models\Division;
+use App\Models\SubCategory;
 use App\Models\SubDistrict;
 use Exception;
 use Illuminate\Support\Facades\DB;

@@ -132,6 +132,9 @@ class ProductService
             if (isset($data['sub_category_id'])) {
                 $query->where('sub_category_id', '=', $data['sub_category_id']);
             }
+            if (isset($data['category_id'])) {
+                $query->where('category_id', '=', $data['category_id']);
+            }
             $responseData = $query->paginate($count);
             $paginationData = [
                 'count' => $responseData->count(),
