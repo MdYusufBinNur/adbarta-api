@@ -29,6 +29,7 @@ return new class extends Migration
             $table->bigInteger('view')->default(1);
             $table->enum('status',['pending','approved','sold','not_approved'])->default('pending');
             $table->double('points')->nullable();
+            $table->double('price')->nullable();
             $table->timestamps();
         });
     }

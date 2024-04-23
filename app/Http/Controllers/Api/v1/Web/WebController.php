@@ -29,6 +29,38 @@ class WebController extends Controller
         }
         return HelperAction::jsonResponse($serviceData);
     }
+    public function getSubCategories($id): JsonResponse
+    {
+        $serviceData = $this->service->getSubCategories($id);
+        if ($serviceData['error']) {
+            return HelperAction::errorResponse($serviceData['message']);
+        }
+        return HelperAction::jsonResponse($serviceData);
+    }
+    public function getDivisions(): JsonResponse
+    {
+        $serviceData = $this->service->getDivisions();
+        if ($serviceData['error']) {
+            return HelperAction::errorResponse($serviceData['message']);
+        }
+        return HelperAction::jsonResponse($serviceData);
+    }
+    public function getDistricts($id): JsonResponse
+    {
+        $serviceData = $this->service->getDistricts($id);
+        if ($serviceData['error']) {
+            return HelperAction::errorResponse($serviceData['message']);
+        }
+        return HelperAction::jsonResponse($serviceData);
+    }
+    public function getSubDistricts($id): JsonResponse
+    {
+        $serviceData = $this->service->getSubDistricts($id);
+        if ($serviceData['error']) {
+            return HelperAction::errorResponse($serviceData['message']);
+        }
+        return HelperAction::jsonResponse($serviceData);
+    }
 
     public function allAds(Request $request): JsonResponse
     {

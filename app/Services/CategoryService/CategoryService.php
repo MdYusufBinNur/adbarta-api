@@ -5,6 +5,9 @@ namespace App\Services\CategoryService;
 use App\Action\HelperAction;
 use App\Http\Resources\Categories\CategoryResource;
 use App\Models\Category;
+use App\Models\District;
+use App\Models\Division;
+use App\Models\SubDistrict;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -83,6 +86,29 @@ class CategoryService
         $check = Category::query()->findOrFail($id);
         $check->deleteOrFail();
         return HelperAction::serviceResponse(false, 'Category deleted', null);
+    }
+
+    public function getSubCategories($id): array
+    {
+        $subs = SubCategory::query()->where('category_id','=',$id)->get();
+        return HelperAction::serviceResponse(false, 'Sub Category List', $subs);
+
+    }
+
+    public function getDivisions(): array
+    {
+        $data = Division::query()->get();
+        return HelperAction::serviceResponse(false, 'List', $data);
+    }
+    public function getDistricts($id): array
+    {
+        $data = District::query()->where('division_id','=', $id)->get();
+        return HelperAction::serviceResponse(false, 'List', $data);
+    }
+    public function getSubDistricts($id): array
+    {
+        $data = SubDistrict::query()->where('district_id','=', $id)->get();
+        return HelperAction::serviceResponse(false, 'List', $data);
     }
 
 }

@@ -32,6 +32,10 @@ Route::prefix('v1')->group(function () {
     Route::post('check-reset-password-code', [AuthController::class, 'checkResetCodeValidity']);
     Route::post('reset-password', [AuthController::class, 'resetPassword']);
     Route::get('category-list',[WebController::class,'categories']);
+    Route::get('divisions',[WebController::class,'getDivisions']);
+    Route::get('get-districts/{id}',[WebController::class,'getDistricts']);
+    Route::get('get-sub-districts/{id}',[WebController::class,'getSubDistricts']);
+    Route::get('sub-category-list/{categoryId}',[WebController::class,'getSubCategories']);
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('verify-user', [AuthController::class, 'checkVerificationCodeValidity']);
         Route::get('profile', [UserController::class, 'profile']);
