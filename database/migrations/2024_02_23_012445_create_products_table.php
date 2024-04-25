@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('sub_category_id')->constrained();
             $table->longText('slug')->nullable();
             $table->string('title')->nullable();
+            $table->string('size')->nullable();
+            $table->string('color')->nullable();
             $table->longText('location')->nullable();
             $table->string('condition')->nullable();
             $table->string('brand')->nullable();
@@ -30,6 +32,12 @@ return new class extends Migration
             $table->enum('status',['pending','approved','sold','not_approved'])->default('pending');
             $table->double('points')->nullable();
             $table->double('price')->nullable();
+            $table->string('contact_name')->nullable();
+            $table->string('contact_email')->nullable();
+            $table->string('contact_number')->nullable();
+            $table->string('additional_contact_number')->nullable();
+            $table->string('show_contact_number')->nullable();
+            $table->boolean('accept_terms')->default(false);
             $table->timestamps();
         });
     }

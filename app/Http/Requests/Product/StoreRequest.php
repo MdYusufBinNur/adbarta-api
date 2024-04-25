@@ -30,6 +30,7 @@ class StoreRequest extends BaseRequest
             'edition' => '',
             'brand' => '',
             'condition' => '',
+            'features' => '',
         ];
     }
 }
