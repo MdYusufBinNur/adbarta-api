@@ -19,7 +19,7 @@ class ProductService
     {
         if (auth()->user() && auth()->user()->role === 'super_admin') {
             $count = $data['per_page'] ?? 20;
-            $query = Product::query()->with('category', 'sub_category', 'user');
+            $query = Product::query()->with('category', 'sub_category', 'user','image');
 
             if (isset($data['name'])) {
                 $query->where('name', 'like', '%' . $data['name'] . '%');
