@@ -11,6 +11,7 @@ class HelperAction
 {
     const APP_NME = 'ADBARTA';
     const ROLE_VENDOR = 'vendor';
+    const ROLE_SELLER = 'seller';
     const ROLE_USER = 'user';
     const ROLE_ADMIN = 'admin';
     const APP_LOCAL_LANG = 'sv';

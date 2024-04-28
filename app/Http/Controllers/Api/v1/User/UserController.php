@@ -66,6 +66,20 @@ class UserController extends Controller
         }
         return HelperAction::jsonResponse($serviceData);
     }
+    /**
+     * Update the specified resource in storage.
+     * @throws \Throwable
+     */
+    public function addPoint(Request $request, string $id)
+    {
+        $data = collect($request)->except(['_method', '/' . $request->path()])->toArray();
+        $serviceData = $this->service->addPoint($data, $id);
+
+        if ($serviceData['error']) {
+            return HelperAction::errorResponse($serviceData['message']);
+        }
+        return HelperAction::jsonResponse($serviceData);
+    }
 
     /**
      * Remove the specified resource from storage.

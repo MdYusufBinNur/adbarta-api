@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('wallet_histories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('user_wallet_id')->constrained();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_wallet_id')->constrained()->cascadeOnDelete();
             $table->double('points');
             $table->string('points_type'); //credit or debit
             $table->string('gateway'); //bkash, nagad, card

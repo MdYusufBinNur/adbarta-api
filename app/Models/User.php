@@ -54,6 +54,14 @@ class User extends Authenticatable
         return $this->hasMany(WalletHistory::class,'user_id');
     }
 
+    public function sub_district()
+    {
+        return $this->belongsTo(SubDistrict::class);
+    }
+    public function district()
+    {
+        return $this->belongsTo(District::class);
+    }
     public static function boot(): void
     {
         parent::boot();

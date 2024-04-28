@@ -19,6 +19,7 @@ class StoreRequest extends BaseRequest
             'category_id' => 'required|exists:categories,id',
             'sub_category_id' => 'required|exists:sub_categories,id',
             'title' => 'required|min: 3',
+            'product_type' => 'required|in:normal,premium',
             'division_id' => 'required|exists:divisions,id',
             'district_id' => 'required|exists:districts,id',
             'sub_district_id' => 'required|exists:sub_districts,id',
@@ -31,6 +32,14 @@ class StoreRequest extends BaseRequest
             'brand' => '',
             'condition' => '',
             'features' => '',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'product_type.required' => "Ad type is required",
+            'product_type.in' => "Ad type must be Top Ad or Normal Ad",
         ];
     }
 }

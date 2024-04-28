@@ -106,6 +106,11 @@ class CategoryService
         $data = District::query()->where('division_id','=', $id)->get();
         return HelperAction::serviceResponse(false, 'List', $data);
     }
+    public function getDistrict(): array
+    {
+        $data = District::query()->get();
+        return HelperAction::serviceResponse(false, 'List', $data);
+    }
     public function getSubDistricts($id): array
     {
         $data = SubDistrict::query()->where('district_id','=', $id)->get();

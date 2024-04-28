@@ -8,6 +8,7 @@ use App\Jobs\Auth\ResendVerificationCodeJob;
 use App\Jobs\Auth\SendResetPasswordCodeJob;
 use App\Models\PasswordResetToken;
 use App\Models\User;
+use App\Models\UserWallet;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -49,6 +50,10 @@ class AuthService
             $userData['token'] = $user->createToken('authToken')->plainTextToken;
             $userData['user'] = new UserResource(User::query()->find($user->id));
             dispatch(new ResendVerificationCodeJob($user->id));
+            UserWallet::query()->create([
+                'user_id' => $user->id,
+                'available' => 0
+            ]);
             DB::commit();
             return HelperAction::successResponse('Verification code has been send', $userData);
         } catch (\Exception $exception) {

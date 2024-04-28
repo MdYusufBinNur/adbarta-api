@@ -53,6 +53,14 @@ class WebController extends Controller
         }
         return HelperAction::jsonResponse($serviceData);
     }
+    public function getDistrict(): JsonResponse
+    {
+        $serviceData = $this->service->getDistrict();
+        if ($serviceData['error']) {
+            return HelperAction::errorResponse($serviceData['message']);
+        }
+        return HelperAction::jsonResponse($serviceData);
+    }
     public function getSubDistricts($id): JsonResponse
     {
         $serviceData = $this->service->getSubDistricts($id);

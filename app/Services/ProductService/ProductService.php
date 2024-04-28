@@ -9,6 +9,8 @@ use App\Http\Resources\Product\ProductResource;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\UserWallet;
+use App\Models\WalletHistory;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -19,7 +21,7 @@ class ProductService
     {
         if (auth()->user() && auth()->user()->role === 'super_admin') {
             $count = $data['per_page'] ?? 20;
-            $query = Product::query()->with('category', 'sub_category', 'user','image');
+            $query = Product::query()->with('category', 'sub_category', 'user', 'image');
 
             if (isset($data['name'])) {
                 $query->where('name', 'like', '%' . $data['name'] . '%');
@@ -56,7 +58,23 @@ class ProductService
     {
         try {
             DB::beginTransaction();
+            $checkWallet = UserWallet::query()->where('user_id', '=', auth()->id())->firstOrFail();
+
+
             $productData = collect($data)->except('image')->toArray();
+            if ($checkWallet->available >= 2) {
+                if ($data['product_type'] === 'premium') {
+                    if ($checkWallet->available < 100) {
+                        return HelperAction::serviceResponse(true, 'Insufficient wallet points for Top Ad', null);
+                    }
+                    $productData['points'] = 100;
+                } else {
+                    $productData['points'] = 2;
+                }
+            } else {
+                return HelperAction::serviceResponse(true, 'Insufficient wallet points', null);
+
+            }
             $createCategory = Product::query()->create($productData);
             if (array_key_exists('image', $data)) {
                 foreach ($data['image'] as $item) {
@@ -66,6 +84,7 @@ class ProductService
                     ]);
                 }
             }
+            $this->walletHistory($createCategory->id, auth()->id());
             DB::commit();
             return HelperAction::serviceResponse(false, 'Product added', $createCategory->fresh());
         } catch (Exception $e) {
@@ -165,6 +184,30 @@ class ProductService
             $respondedData = new ProductDetailsResource($details);
         } catch (Throwable $exception) {
             return HelperAction::serviceResponse(true, $exception->getMessage(), null);
+        }
+    }
+
+    public function walletHistory($productId, $userID)
+    {
+        $check = UserWallet::query()->where('user_id','=', $userID)->firstOrFail();
+        $product = Product::query()->findOrFail($productId);
+        $availablePoints = $check->available - $product->points;
+        $totalUsedPoint = $check->used + $product->points;
+        try {
+            $check->updateOrFail([
+                'available' => $availablePoints,
+                'used' => $totalUsedPoint,
+            ]);
+            WalletHistory::query()->create([
+                'user_id' => $product->user_id,
+                'user_wallet_id' => $check->id,
+                'points' => $product->points,
+                'points_type' => 'debit',
+                'gateway' => 'system',
+                'status' => 'approved',
+                'trxID' => 'P-'.$productId,
+            ]);
+        } catch (Throwable $e) {
         }
     }
 }

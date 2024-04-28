@@ -35,6 +35,7 @@ Route::prefix('v1')->group(function () {
     Route::get('divisions',[WebController::class,'getDivisions']);
     Route::get('get-districts/{id}',[WebController::class,'getDistricts']);
     Route::get('get-sub-districts/{id}',[WebController::class,'getSubDistricts']);
+    Route::get('get-district',[WebController::class,'getDistrict']);
     Route::get('sub-category-list/{categoryId}',[WebController::class,'getSubCategories']);
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('verify-user', [AuthController::class, 'checkVerificationCodeValidity']);
@@ -44,10 +45,16 @@ Route::prefix('v1')->group(function () {
             Route::resource('categories', CategoryController::class);
             Route::resource('sub-categories', SubCategoryController::class);
             Route::resource('users', UserController::class);
+            Route::post('add-point/{id}',[UserController::class,'addPoint']);
         });
         Route::resource('products', ProductController::class);
 
         Route::get('signout', function () {
+            auth()->user()->currentAccessToken()->delete();
+            return HelperAction::successResponse('Successfully Logout', null);
+        });
+
+        Route::get('logout', function () {
             auth()->user()->currentAccessToken()->delete();
             return HelperAction::successResponse('Successfully Logout', null);
         });

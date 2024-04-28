@@ -19,7 +19,9 @@ return new class extends Migration
             $table->string('photo')->nullable();
             $table->string('phone')->unique()->nullable();
             $table->string('website')->nullable();
+            $table->string('website')->nullable();
             $table->string('company')->nullable();
+            $table->string('dob')->nullable();
             $table->longText('about')->nullable();
             $table->string('role')->default('seller');
             $table->timestamp('email_verified_at')->nullable();

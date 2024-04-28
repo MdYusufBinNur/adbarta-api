@@ -23,6 +23,9 @@ return new class extends Migration
             $table->string('condition')->nullable();
             $table->string('brand')->nullable();
             $table->string('edition')->nullable();
+            $table->enum('product_type',['normal','premium'])->default('normal');
+            $table->integer('priority')->nullable();
+            $table->dateTime('expired_at')->nullable();
             $table->string('authenticity')->nullable();
             $table->longText('features')->nullable();
             $table->unsignedBigInteger('division_id')->nullable();

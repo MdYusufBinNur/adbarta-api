@@ -23,11 +23,20 @@ class UserResource extends JsonResource
             'website' => $this->website,
             'about' => $this->about,
             'role' => $this->role,
+            'nid_one' => $this->nid_one,
+            'nid_two' => $this->nid_two,
             'status' => $this->status,
+            'street' => $this->street,
+            'dob' => $this->dob,
             'company' => $this->company,
             'active' => $this->active,
             'is_public' => $this->is_public,
             'email_verified_at' => $this->email_verified_at,
+            'district' => $this?->district?->name,
+            'district_id' => $this?->district_id,
+            'sub_district' => $this?->sub_district?->name,
+            'sub_district_id' => $this?->sub_district_id,
+            'wallet' => $this->whenLoaded('wallet'),
         ];
     }
 }

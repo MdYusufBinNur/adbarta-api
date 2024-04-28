@@ -5,6 +5,7 @@ namespace App\Services\UserService;
 use App\Action\HelperAction;
 use App\Http\Resources\User\UserResource;
 use App\Models\User;
+use App\Models\UserWallet;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
@@ -13,7 +14,7 @@ class UserService
     public function index($data)
     {
         $count = $data['per_page'] ?? 10;
-        $query = User::query()->where('role', '!=', HelperAction::ROLE_VENDOR)->latest();
+        $query = User::query()->with('district','sub_district','wallet')->where('role', '=', HelperAction::ROLE_SELLER)->latest();
         if (isset($data['text'])) {
             $query->where('full_name', 'like', '%' . $data['text'] . '%')
             ->orWhere('email', 'like', '%' . $data['text'] . '%');
@@ -29,7 +30,7 @@ class UserService
         $d['total_page'] = ceil($users->total() / $users->perPage());
         $d['next_page'] = $users->currentPage() + 1 <= $users->lastPage() ? $users->currentPage() + 1 : $users->lastPage();
         $d['prev_page'] = $users->currentPage() - 1 < 0 ? $users->currentPage() : $users->currentPage() - 1;
-        $finalDataset['users'] = $users->items();
+        $finalDataset['users'] = UserResource::collection($users->items());
         $finalDataset['pagination'] = $d;
         return HelperAction::serviceResponse(false, 'User list', $finalDataset);
     }
@@ -69,12 +70,18 @@ class UserService
             if (isset($data['image'])) {
                 $data['photo'] = HelperAction::saveVendorImage($data['image'], 'Vendors');
             }
+            if (isset($data['nid_one'])) {
+                $data['nid_one'] = HelperAction::saveVendorImage($data['nid_one'], 'Vendors');
+            }
+            if (isset($data['nid_two'])) {
+                $data['nid_two'] = HelperAction::saveVendorImage($data['nid_two'], 'Vendors');
+            }
 
 
             $finalDataset = collect($data)->except('image')->toArray();
             $create = $user->updateOrFail($finalDataset);
             DB::commit();
-            return HelperAction::serviceResponse(false, 'User has been updated', $user->fresh());
+            return HelperAction::serviceResponse(false, 'User has been updated', new UserResource($user->fresh('district','sub_district', 'wallet')));
         } catch (\Exception $exception) {
             DB::rollBack();
             return HelperAction::serviceResponse(true, $exception->getMessage(), null);
@@ -112,5 +119,16 @@ class UserService
         }
 
 
+    }
+
+    public function addPoint(array $data, string $id)
+    {
+        $user = User::query()->findOrFail($id);
+        $wallet = UserWallet::query()->where('user_id','=', $id)->firstOrFail();
+        $available = floatval($wallet->available) + floatval($data['points']);
+        $wallet->updateOrFail([
+            'available' => $available
+        ]);
+        return HelperAction::serviceResponse(false,'Wallet point Added', new UserResource($user->fresh('wallet','district', 'sub_district')));
     }
 }
