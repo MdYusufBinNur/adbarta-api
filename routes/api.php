@@ -45,6 +45,7 @@ Route::prefix('v1')->group(function () {
             Route::resource('categories', CategoryController::class);
             Route::resource('sub-categories', SubCategoryController::class);
             Route::resource('users', UserController::class);
+            Route::resource('ads', ProductController::class);
             Route::post('add-point/{id}',[UserController::class,'addPoint']);
         });
         Route::resource('products', ProductController::class);

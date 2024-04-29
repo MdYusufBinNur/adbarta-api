@@ -45,7 +45,7 @@ class ProductService
                 'prev_page' => $responseData->currentPage() - 1 < 0 ? $responseData->currentPage() : $responseData->currentPage() - 1,
             ];
             $finalDataset = [
-                'products' => $responseData->items(),
+                'products' => ProductResource::collection($responseData->items()),
                 'pagination' => $paginationData,
             ];
             return HelperAction::serviceResponse(false, 'Product list', $finalDataset);
@@ -111,7 +111,6 @@ class ProductService
                     ]);
                 }
             }
-
             DB::commit();
             return HelperAction::serviceResponse(false, 'Product updated', $check->fresh('image'));
         } catch (Exception $e) {
