@@ -36,6 +36,7 @@ class UserResource extends JsonResource
             'district_id' => $this?->district_id,
             'sub_district' => $this?->sub_district?->name,
             'sub_district_id' => $this?->sub_district_id,
+            'type' => $this?->type,
             'wallet' => $this->whenLoaded('wallet'),
         ];
     }
