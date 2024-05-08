@@ -31,6 +31,7 @@ return new class extends Migration
             $table->dateTime('last_activity')->default(now()->format('Y-m-d H:i:s'));
             $table->boolean('active')->default(0);
             $table->enum('status',['pending','requested','approved','declined'])->default('pending');
+            $table->enum('type',['normal','free'])->default('normal');
             $table->rememberToken();
             $table->timestamps();
         });
