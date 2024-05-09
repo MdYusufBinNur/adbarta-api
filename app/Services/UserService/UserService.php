@@ -4,6 +4,7 @@ namespace App\Services\UserService;
 
 use App\Action\HelperAction;
 use App\Http\Resources\User\UserResource;
+use App\Http\Resources\User\UserWalletResource;
 use App\Models\User;
 use App\Models\UserWallet;
 use Illuminate\Http\JsonResponse;
@@ -131,4 +132,6 @@ class UserService
         ]);
         return HelperAction::serviceResponse(false,'Wallet point Added', new UserResource($user->fresh('wallet','district', 'sub_district')));
     }
+
+
 }

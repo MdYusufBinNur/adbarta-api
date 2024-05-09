@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\v1\Admin\Product\ProductController;
 use App\Http\Controllers\Api\v1\Admin\SubCategoryController;
 use App\Http\Controllers\Api\v1\Auth\AuthController;
 use App\Http\Controllers\Api\v1\User\UserController;
+use App\Http\Controllers\Api\v1\User\WalletController;
 use App\Http\Controllers\Api\v1\Web\WebController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -40,13 +41,14 @@ Route::prefix('v1')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('verify-user', [AuthController::class, 'checkVerificationCodeValidity']);
         Route::get('profile', [UserController::class, 'profile']);
+        Route::get('wallet', [WalletController::class, 'wallet']);
         Route::post('profile-update', [UserController::class, 'profileUpdate']);
         Route::middleware(['checkUserRole:super_admin'])->group(function () {
             Route::resource('categories', CategoryController::class);
             Route::resource('sub-categories', SubCategoryController::class);
             Route::resource('users', UserController::class);
             Route::resource('ads', ProductController::class);
-            Route::post('add-point/{id}',[UserController::class,'addPoint']);
+            Route::post('add-point/{id}',[WalletController::class,'addWalletCredit']);
         });
         Route::resource('products', ProductController::class);
 
