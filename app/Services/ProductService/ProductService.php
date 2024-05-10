@@ -180,7 +180,8 @@ class ProductService
     {
         try {
             $details = Product::query()->where('slug', '=', $slug)->firstOrFail();
-            $respondedData = new ProductDetailsResource($details);
+            $respondedData = new ProductResource($details);
+            return HelperAction::serviceResponse(false, 'Product Details', $respondedData);
         } catch (Throwable $exception) {
             return HelperAction::serviceResponse(true, $exception->getMessage(), null);
         }

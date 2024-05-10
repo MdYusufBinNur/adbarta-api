@@ -49,6 +49,8 @@ class ProductResource extends JsonResource
             'accept_terms' => $this->accept_terms,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'category_name' => $this?->category?->name,
+            'sub_category_name' => $this?->sub_category?->name,
             'sub_category' => new SubCategoryResource($this->sub_category),
             'category' => new CategoryResource($this->category),
             'images' => ProductImagesResource::collection($this->whenLoaded('image')),
