@@ -19,7 +19,7 @@ class CategoryResource extends JsonResource
             'id' => $this->id,
             'image' => $this->image,
             'name' => $this->name,
-            'ads' => 0,
+            'ads' => $this->product_count,
             'sub' => SubCategoryResource::collection($this->sub_category)
         ];
     }

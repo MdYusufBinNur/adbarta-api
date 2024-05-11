@@ -38,7 +38,7 @@ class CategoryService
             return HelperAction::serviceResponse(false, 'Category list', $finalDataset);
         }
 
-        $responseData = Category::with('sub_category')->latest()->get();
+        $responseData = Category::with('sub_category')->withCount('product')->latest()->get();
         return HelperAction::serviceResponse(false, 'Category list', CategoryResource::collection($responseData));
     }
 
