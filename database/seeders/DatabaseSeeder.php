@@ -448,6 +448,7 @@ Sleek and Durable Design: Crafted from durable materials and featuring a stylish
             $category->sub_category->each(function ($sub_category) use ($category, $featureText) {
                 for ($i = 1; $i <= 10; $i++) {
                     Product::create([
+                        'user_id' => 2,
                         'category_id' => $category->id,
                         'sub_category_id' => $sub_category->id,
                         'slug' => "sample-product-$i",

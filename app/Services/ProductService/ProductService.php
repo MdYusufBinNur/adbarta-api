@@ -50,7 +50,10 @@ class ProductService
             ];
             return HelperAction::serviceResponse(false, 'Product list', $finalDataset);
         }
-        $responseData = Product::with('sub_category', 'category', 'image')->latest()->get();
+        $responseData = Product::with('sub_category', 'category', 'image')
+            ->where('user_id','=', auth()->id())
+            ->latest()
+            ->get();
         return HelperAction::serviceResponse(false, 'Product list', ProductResource::collection($responseData));
     }
 
