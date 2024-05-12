@@ -5,9 +5,8 @@ namespace App\Http\Controllers\Api\v1\User;
 use App\Action\HelperAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Wallet\AddWalletPointFromAdminRequest;
-use App\Models\UserWallet;
-use App\Services\UserService\UserService;
 use App\Services\WalletService\WalletService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class WalletController extends Controller
@@ -19,7 +18,7 @@ class WalletController extends Controller
         $this->service = $service;
     }
 
-    public function wallet(Request $request): \Illuminate\Http\JsonResponse
+    public function wallet(Request $request): JsonResponse
     {
         $data = collect($request)->except(['_method', '/' . $request->path()])->toArray();
         $serviceData = $this->service->wallet($data);
@@ -30,10 +29,32 @@ class WalletController extends Controller
         return HelperAction::jsonResponse($serviceData);
     }
 
-    public function addWalletCredit(AddWalletPointFromAdminRequest $request, $userId): \Illuminate\Http\JsonResponse
+    public function addWalletCredit(AddWalletPointFromAdminRequest $request, $userId): JsonResponse
     {
         $data = collect($request)->except(['_method', '/' . $request->path()])->toArray();
         $serviceData = $this->service->addWalletCredit($data, $userId);
+
+        if ($serviceData['error']) {
+            return HelperAction::errorResponse($serviceData['message']);
+        }
+        return HelperAction::jsonResponse($serviceData);
+    }
+
+    public function getWalletHistory(Request $request): JsonResponse
+    {
+        $data = collect($request)->except(['_method', '/' . $request->path()])->toArray();
+        $serviceData = $this->service->getWalletHistory($data);
+
+        if ($serviceData['error']) {
+            return HelperAction::errorResponse($serviceData['message']);
+        }
+        return HelperAction::jsonResponse($serviceData);
+    }
+
+    public function changeStatus(Request $request, $historyId): JsonResponse
+    {
+        $data = collect($request)->except(['_method', '/' . $request->path()])->toArray();
+        $serviceData = $this->service->changeStatus($data, $historyId);
 
         if ($serviceData['error']) {
             return HelperAction::errorResponse($serviceData['message']);

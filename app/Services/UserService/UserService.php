@@ -118,6 +118,7 @@ class UserService
             }
             $data['password'] = $password;
             $data['status'] = 'approved';
+            $data['type'] = 'free';
             $finalDataset = collect($data)->except('image','point')->toArray();
             $create = User::query()->create($finalDataset);
             $wallet = UserWallet::query()->create([
@@ -126,7 +127,7 @@ class UserService
                 'used' => 0,
             ]);
             DB::commit();
-            return HelperAction::serviceResponse(false, 'User has been created', $create->fresh());
+            return HelperAction::serviceResponse(false, 'User has been created', new UserResource($create->fresh('district','sub_district', 'wallet')));
         } catch (\Exception $exception) {
             DB::rollBack();
             return HelperAction::serviceResponse(true, $exception->getMessage(), null);

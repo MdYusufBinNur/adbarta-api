@@ -3,6 +3,7 @@
 namespace App\Services\WalletService;
 
 use App\Action\HelperAction;
+use App\Http\Resources\User\UserWalletHistoryResource;
 use App\Http\Resources\User\UserWalletResource;
 use App\Models\UserWallet;
 use App\Models\WalletHistory;
@@ -15,11 +16,12 @@ class WalletService
         $wallet = UserWallet::query()->with('history')->where('user_id', '=', auth()->id())->firstOrFail();
         return HelperAction::serviceResponse(false, 'Wallet history', new UserWalletResource($wallet));
     }
+
     public function addWalletCredit($data, $userId): array
     {
         try {
             DB::beginTransaction();
-            $addWallet = UserWallet::query()->where('user_id','=', $userId)->firstOrFail();
+            $addWallet = UserWallet::query()->where('user_id', '=', $userId)->firstOrFail();
             $available = $addWallet->available + floatval($data['point']);
             $addWallet->updateOrFail([
                 'available' => $available
@@ -28,7 +30,7 @@ class WalletService
                 'user_id' => $userId,
                 'user_wallet_id' => $addWallet->id,
                 'name' => 'Admin',
-                'trxID' => 'ADMIN-'.now(),
+                'trxID' => 'ADMIN-' . now(),
                 'points' => $data['point'],
                 'phone' => '-',
                 'gateway' => 'system',
@@ -39,7 +41,7 @@ class WalletService
             return HelperAction::serviceResponse(false, 'Point Added', null);
         } catch (\Throwable $e) {
             DB::rollBack();
-            return HelperAction::serviceResponse(true,$e->getMessage(), null);
+            return HelperAction::serviceResponse(true, $e->getMessage(), null);
         }
     }
 
@@ -47,15 +49,32 @@ class WalletService
     {
         try {
             DB::beginTransaction();
-            $addWallet = UserWallet::query()->findOrFail($walletID);
+            $addWallet = WalletHistory::query()->where('points_type','=','credit')->findOrFail($walletID);
+            $checkWallet = UserWallet::query()->findOrFail($addWallet->user_wallet_id);
+            if ($data['status'] === 'Approve') {
+                $data['status'] = 'approved';
+            } else {
+                $data['status'] = 'not_approved';
+            }
+            $available = $checkWallet->available + floatval($addWallet->points);
             $addWallet->updateOrFail([
                 'status' => $data['status']
             ]);
+            $checkWallet->updateOrFail([
+                'available' => $available
+            ]);
             DB::commit();
-            return HelperAction::serviceResponse(false, 'Point Added', null);
+            return HelperAction::serviceResponse(false, 'Point Added', new UserWalletHistoryResource($addWallet->fresh('user')));
         } catch (\Throwable $e) {
             DB::rollBack();
-            return HelperAction::serviceResponse(true,$e->getMessage(), null);
+            return HelperAction::serviceResponse(true, $e->getMessage(), null);
         }
+    }
+
+    public function getWalletHistory($data): array
+    {
+        $wallet = WalletHistory::query()->with('user')->latest()->get();
+        return HelperAction::serviceResponse(false, 'Wallet history', UserWalletHistoryResource::collection($wallet));
+
     }
 }

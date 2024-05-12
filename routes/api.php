@@ -49,6 +49,8 @@ Route::prefix('v1')->group(function () {
             Route::resource('users', UserController::class);
             Route::resource('ads', ProductController::class);
             Route::post('add-point/{id}',[WalletController::class,'addWalletCredit']);
+            Route::get('get-wallet-histories',[WalletController::class,'getWalletHistory']);
+            Route::post('change-status/{changeStatus}',[WalletController::class,'changeStatus']);
         });
         Route::resource('products', ProductController::class);
 

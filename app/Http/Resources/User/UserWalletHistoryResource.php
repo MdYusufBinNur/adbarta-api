@@ -17,10 +17,11 @@ class UserWalletHistoryResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'user_uid' => $this->whenLoaded('user')?->uid,
             'points' => $this->points,
             'points_type' => $this->points_type,
             'gateway' => $this->gateway,
-            'status' => $this->status,
+            'status' => $this->status === 'approved' ? "Approve" : 'Not Approve',
             'trxID' => $this->trxID,
             'name' => $this->name,
             'phone' => $this->phone,
