@@ -29,11 +29,11 @@ class WalletService
                 'user_wallet_id' => $addWallet->id,
                 'name' => 'Admin',
                 'trxID' => 'ADMIN-'.now(),
-                'point' => $data['point'],
+                'points' => $data['point'],
                 'phone' => '-',
                 'gateway' => 'system',
                 'status' => 'approved',
-                'point_type' => 'credit',
+                'points_type' => 'credit',
             ]);
             DB::commit();
             return HelperAction::serviceResponse(false, 'Point Added', null);

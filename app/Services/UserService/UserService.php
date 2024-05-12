@@ -91,9 +91,18 @@ class UserService
 
     }
 
-    public function destroy(string $id)
+    public function destroy(string $id): array
     {
+        try {
+            DB::beginTransaction();
+            $user = User::query()->findOrFail($id)->deleteOrFail();
+            DB::commit();
+            return HelperAction::serviceResponse(false, 'User has been deleted', null);
+        } catch (\Throwable $exception) {
+            DB::rollBack();
+            return HelperAction::serviceResponse(true, $exception->getMessage(), null);
 
+        }
     }
 
     public function store(array $data): array

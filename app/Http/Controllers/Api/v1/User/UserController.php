@@ -91,7 +91,7 @@ class UserController extends Controller
         if ($serviceData['error']) {
             return HelperAction::errorResponse($serviceData['message']);
         }
-
+        return HelperAction::jsonResponse($serviceData);
     }
 
     /**
