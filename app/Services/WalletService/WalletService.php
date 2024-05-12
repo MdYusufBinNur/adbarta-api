@@ -77,4 +77,29 @@ class WalletService
         return HelperAction::serviceResponse(false, 'Wallet history', UserWalletHistoryResource::collection($wallet));
 
     }
+
+    public function saveTransactionId(array $data): array
+    {
+        try {
+            DB::beginTransaction();
+            $addWallet = UserWallet::query()->where('user_id', '=', auth()->id())->firstOrFail();
+
+            $create = WalletHistory::query()->create([
+                'user_id' => auth()->id(),
+                'user_wallet_id' => $addWallet->id,
+                'name' => auth()?->user()?->full_name,
+                'trxID' => $data['trxID'],
+                'points' => 0,
+                'phone' => auth()?->user()?->phone,
+                'gateway' => $data['gateway'],
+                'status' => 'pending',
+                'points_type' => 'credit',
+            ]);
+            DB::commit();
+            return HelperAction::serviceResponse(false, 'trxID submitted successfully',  new UserWalletResource($create->fresh()));
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return HelperAction::serviceResponse(true, $e->getMessage(), null);
+        }
+    }
 }

@@ -53,6 +53,7 @@ Route::prefix('v1')->group(function () {
             Route::post('change-status/{changeStatus}',[WalletController::class,'changeStatus']);
         });
         Route::resource('products', ProductController::class);
+        Route::post('submit-transaction',[WalletController::class,'saveTransactionId']);
 
         Route::get('signout', function () {
             auth()->user()->currentAccessToken()->delete();
