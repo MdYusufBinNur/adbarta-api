@@ -13,7 +13,7 @@ class WalletService
 {
     public function wallet(array $data): array
     {
-        $wallet = UserWallet::query()->with('history')->where('user_id', '=', auth()->id())->firstOrFail();
+        $wallet = UserWallet::query()->with('history.user','user')->where('user_id', '=', auth()->id())->firstOrFail();
         return HelperAction::serviceResponse(false, 'Wallet history', new UserWalletResource($wallet));
     }
 
@@ -96,7 +96,7 @@ class WalletService
                 'points_type' => 'credit',
             ]);
             DB::commit();
-            return HelperAction::serviceResponse(false, 'trxID submitted successfully',  new UserWalletResource($create->fresh()));
+            return HelperAction::serviceResponse(false, 'trxID submitted successfully',  new UserWalletResource($create->fresh('user')));
         } catch (\Throwable $e) {
             DB::rollBack();
             return HelperAction::serviceResponse(true, $e->getMessage(), null);
