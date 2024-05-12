@@ -16,9 +16,8 @@ class AdminUserStoreRequest extends BaseRequest
         return [
             'email' => 'required|unique:users,email|email:regex:/^.+@.+$/i|max:50',
             'password' => 'required|min:6',
-            'role' => 'required|in:admin,vendor,staff',
+            'role' => 'required|in:admin,manager,seller',
             'full_name' => 'required|max:30',
-            'company' => '',
             'phone' => '',
         ];
     }

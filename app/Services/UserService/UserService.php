@@ -108,9 +108,14 @@ class UserService
                 $data['photo'] = HelperAction::saveVendorImage($data['image'], 'Vendors');
             }
             $data['password'] = $password;
-
-            $finalDataset = collect($data)->except('image')->toArray();
+            $data['status'] = 'approved';
+            $finalDataset = collect($data)->except('image','point')->toArray();
             $create = User::query()->create($finalDataset);
+            $wallet = UserWallet::query()->create([
+                'user_id' => $create->id,
+                'available' => $data['point'] ?? 0,
+                'used' => 0,
+            ]);
             DB::commit();
             return HelperAction::serviceResponse(false, 'User has been created', $create->fresh());
         } catch (\Exception $exception) {
