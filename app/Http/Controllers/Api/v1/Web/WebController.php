@@ -19,7 +19,6 @@ class WebController extends Controller
         $this->service = $service;
         $this->productService = $productService;
     }
-
     public function categories(Request $request): JsonResponse
     {
         $data = $request->toArray();
@@ -69,7 +68,6 @@ class WebController extends Controller
         }
         return HelperAction::jsonResponse($serviceData);
     }
-
     public function allAds(Request $request): JsonResponse
     {
         $data = $request->toArray();
@@ -79,7 +77,6 @@ class WebController extends Controller
         }
         return HelperAction::jsonResponse($serviceData);
     }
-
     public function adDetails($slug): JsonResponse
     {
         $serviceData = $this->productService->details($slug);
@@ -88,4 +85,5 @@ class WebController extends Controller
         }
         return HelperAction::jsonResponse($serviceData);
     }
+
 }

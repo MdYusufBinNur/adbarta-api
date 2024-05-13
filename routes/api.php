@@ -1,6 +1,7 @@
 <?php
 
 use App\Action\HelperAction;
+use App\Http\Controllers\Api\v1\Admin\AdminHomeController;
 use App\Http\Controllers\Api\v1\Admin\CategoryController;
 use App\Http\Controllers\Api\v1\Admin\Product\ProductController;
 use App\Http\Controllers\Api\v1\Admin\SubCategoryController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\Api\v1\Auth\AuthController;
 use App\Http\Controllers\Api\v1\User\UserController;
 use App\Http\Controllers\Api\v1\User\WalletController;
 use App\Http\Controllers\Api\v1\Web\WebController;
+use App\Services\AdminService\AdminService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -32,12 +34,12 @@ Route::prefix('v1')->group(function () {
     Route::post('send-reset-password-code', [AuthController::class, 'sendResetPasswordCodeToMail']);
     Route::post('check-reset-password-code', [AuthController::class, 'checkResetCodeValidity']);
     Route::post('reset-password', [AuthController::class, 'resetPassword']);
-    Route::get('category-list',[WebController::class,'categories']);
-    Route::get('divisions',[WebController::class,'getDivisions']);
-    Route::get('get-districts/{id}',[WebController::class,'getDistricts']);
-    Route::get('get-sub-districts/{id}',[WebController::class,'getSubDistricts']);
-    Route::get('get-district',[WebController::class,'getDistrict']);
-    Route::get('sub-category-list/{categoryId}',[WebController::class,'getSubCategories']);
+    Route::get('category-list', [WebController::class, 'categories']);
+    Route::get('divisions', [WebController::class, 'getDivisions']);
+    Route::get('get-districts/{id}', [WebController::class, 'getDistricts']);
+    Route::get('get-sub-districts/{id}', [WebController::class, 'getSubDistricts']);
+    Route::get('get-district', [WebController::class, 'getDistrict']);
+    Route::get('sub-category-list/{categoryId}', [WebController::class, 'getSubCategories']);
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('verify-user', [AuthController::class, 'checkVerificationCodeValidity']);
         Route::get('profile', [UserController::class, 'profile']);
@@ -48,12 +50,13 @@ Route::prefix('v1')->group(function () {
             Route::resource('sub-categories', SubCategoryController::class);
             Route::resource('users', UserController::class);
             Route::resource('ads', ProductController::class);
-            Route::post('add-point/{id}',[WalletController::class,'addWalletCredit']);
-            Route::get('get-wallet-histories',[WalletController::class,'getWalletHistory']);
-            Route::post('change-status/{changeStatus}',[WalletController::class,'changeStatus']);
+            Route::post('add-point/{id}', [WalletController::class, 'addWalletCredit']);
+            Route::get('get-wallet-histories', [WalletController::class, 'getWalletHistory']);
+            Route::get('get-historical-data', [AdminHomeController::class, 'homeData']);
+            Route::post('change-status/{changeStatus}', [WalletController::class, 'changeStatus']);
         });
         Route::resource('products', ProductController::class);
-        Route::post('submit-transaction',[WalletController::class,'saveTransactionId']);
+        Route::post('submit-transaction', [WalletController::class, 'saveTransactionId']);
 
         Route::get('signout', function () {
             auth()->user()->currentAccessToken()->delete();
@@ -65,6 +68,6 @@ Route::prefix('v1')->group(function () {
             return HelperAction::successResponse('Successfully Logout', null);
         });
     });
-    Route::get('get-ads', [WebController::class,'allAds']);
-    Route::get('get-ads/{slug}', [WebController::class,'adDetails']);
+    Route::get('get-ads', [WebController::class, 'allAds']);
+    Route::get('get-ads/{slug}', [WebController::class, 'adDetails']);
 });
