@@ -18,8 +18,9 @@ class AdminService
         $ads = Product::query()->count();
         $date = $data['date'] ?? Carbon::today()->toDateString();
         $transactionCountsForDate = WalletHistory::getDailyTransactionAmounts($date);
+        $saleCountLast7Days = Product::getLast7DaysSaleCount();
 
-        return HelperAction::serviceResponse(false,'Historical data', compact('categories','users','ads','transactionCountsForDate'));
+        return HelperAction::serviceResponse(false,'Historical data', compact('categories','users','ads','transactionCountsForDate','saleCountLast7Days'));
 
     }
 }

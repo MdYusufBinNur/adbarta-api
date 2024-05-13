@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 class Product extends Model
@@ -47,6 +48,19 @@ class Product extends Model
 
             $model->slug = $slug;
         });
+    }
+
+    public static function getLast7DaysSaleCount(): array
+    {
+        $saleCounts = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = Carbon::now()->subDays($i)->startOfDay();
+//            $saleCounts[$date->toDateString()] = self::query()->where('status', '=','sold')->whereDate('created_at', $date)->count();
+            $saleCounts[] = self::query()->where('status', '=','sold')->whereDate('created_at', $date)->count();
+        }
+
+        return $saleCounts;
+
     }
 
 }
