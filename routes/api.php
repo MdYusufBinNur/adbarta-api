@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\v1\Admin\CategoryController;
 use App\Http\Controllers\Api\v1\Admin\Product\ProductController;
 use App\Http\Controllers\Api\v1\Admin\SubCategoryController;
 use App\Http\Controllers\Api\v1\Auth\AuthController;
+use App\Http\Controllers\Api\v1\MessageController;
 use App\Http\Controllers\Api\v1\User\UserController;
 use App\Http\Controllers\Api\v1\User\WalletController;
 use App\Http\Controllers\Api\v1\Web\WebController;
@@ -44,6 +45,8 @@ Route::prefix('v1')->group(function () {
         Route::post('verify-user', [AuthController::class, 'checkVerificationCodeValidity']);
         Route::get('profile', [UserController::class, 'profile']);
         Route::get('wallet', [WalletController::class, 'wallet']);
+        Route::resource('chats', MessageController::class)->only('index','store');
+        Route::get('chats/{receiverId}', [MessageController::class, 'getMessagesByReceiverId']);
         Route::post('profile-update', [UserController::class, 'profileUpdate']);
         Route::middleware(['checkUserRole:super_admin'])->group(function () {
             Route::resource('categories', CategoryController::class);
