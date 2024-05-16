@@ -5,6 +5,7 @@ namespace App\Services\MessageService;
 use App\Action\HelperAction;
 use App\Http\Resources\Chat\ChatResource;
 use App\Models\Message;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
@@ -16,37 +17,32 @@ class MessageService
         // Get the authenticated user's ID
         $user_id = auth()->user()->id;
 
-        // Retrieve distinct users whom the authenticated user has communicated with
-        $users = Message::where('user_id', $user_id)
+        // Retrieve distinct room IDs where the authenticated user is a participant
+        $rooms = Message::where('user_id', $user_id)
             ->orWhere('receiver_id', $user_id)
-            ->select('user_id', 'receiver_id')
+            ->select('room_id')
             ->distinct()
             ->get();
 
         // Initialize an array to store user details with their latest message
         $userMessages = [];
 
-        // Iterate over each user
-        foreach ($users as $user) {
-            // Determine the ID of the other user in the conversation
-            $other_user_id = ($user->user_id == $user_id) ? $user->receiver_id : $user->user_id;
-
-            // Retrieve the latest message exchanged between the authenticated user and this user
-            $latestMessage = Message::where(function($query) use ($user_id, $other_user_id) {
-                $query->where('user_id', $user_id)
-                    ->where('receiver_id', $other_user_id);
-            })
-                ->orWhere(function($query) use ($user_id, $other_user_id) {
-                    $query->where('receiver_id', $user_id)
-                        ->where('user_id', $other_user_id);
-                })
+        // Iterate over each room
+        foreach ($rooms as $room) {
+            // Retrieve the latest message in this room
+            $latestMessage = Message::where('room_id', $room->room_id)
                 ->orderBy('created_at', 'desc')
                 ->first();
 
+            // Determine the ID of the other user in the conversation
+            $other_user_id = ($latestMessage->user_id == $user_id) ? $latestMessage->receiver_id : $latestMessage->user_id;
+
+            // Get the receiver's information
+            $receiver = User::find($other_user_id);
+
             // Add user details with their latest message and receiver information to the array
             $userMessages[] = [
-
-                'receiver_info' => $latestMessage->receiver,
+                'receiver_info' => $receiver,
                 'latest_message' => $latestMessage,
             ];
         }
@@ -56,7 +52,7 @@ class MessageService
             return $b['latest_message']->created_at <=> $a['latest_message']->created_at;
         });
 
-        return HelperAction::serviceResponse(false, 'User list with messages', ChatResource::collection($userMessages));
+        return HelperAction::serviceResponse(false, 'User list with messages', $userMessages);
     }
 
 

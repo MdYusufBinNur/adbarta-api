@@ -14,6 +14,11 @@ class ChatResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $message = $this['latest_message']['message'];
+
+        if (strlen($message) > 150) {
+            $message = substr($message, 0, 150) . '...';
+        }
         return [
 
             'id' => $this['receiver_info']['id'],
@@ -21,7 +26,7 @@ class ChatResource extends JsonResource
             'photo' => $this['receiver_info']['photo'],
             'message' => [
                 'id' => $this['latest_message']['id'],
-                'message' => $this['latest_message']['message'],
+                'message' => $message,
                 'seen' => $this['latest_message']['seen'],
                 'created_at' => $this['latest_message']['created_at']->format('Y-m-d h:i A'),
                 // Add other latest_message fields as needed
