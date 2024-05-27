@@ -17,7 +17,7 @@ class MessageController extends Controller
         $this->service = $service;
     }
 
-    public function index(): JsonResponse
+    public function index()
     {
         $serviceData = $this->service->index();
         if ($serviceData['error']) {
@@ -35,9 +35,9 @@ class MessageController extends Controller
         return HelperAction::jsonResponse($serviceData);
     }
 
-    public function getMessagesByReceiverId($receiverID): JsonResponse
+    public function getMessagesByRoomId($room_id): JsonResponse
     {
-        $serviceData = $this->service->getMessagesByReceiverId($receiverID);
+        $serviceData = $this->service->getMessagesByRoomId($room_id);
         if ($serviceData['error']) {
             return HelperAction::errorResponse($serviceData['message']);
         }
