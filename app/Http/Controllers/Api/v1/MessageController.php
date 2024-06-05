@@ -43,4 +43,13 @@ class MessageController extends Controller
         }
         return HelperAction::jsonResponse($serviceData);
     }
+
+    public function checkExistingChat($userId)
+    {
+        $serviceData = $this->service->checkExistingChat($userId);
+        if ($serviceData['error']) {
+            return HelperAction::errorResponse($serviceData['message']);
+        }
+        return HelperAction::jsonResponse($serviceData);
+    }
 }

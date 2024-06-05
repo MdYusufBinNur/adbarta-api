@@ -5,6 +5,7 @@ namespace App\Services\MessageService;
 use App\Action\HelperAction;
 use App\Http\Resources\Chat\ChatResource;
 use App\Models\Message;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
@@ -26,9 +27,9 @@ class MessageService
             ->map(function ($messages) use ($user_id) {
                 $message = $messages->first();
                 if ($message->user_id == $user_id) {
-                    $message->user  =  $message->receiver;
+                    $message->user = $message->receiver;
                 } else {
-                    $message->user  = $message->sender;
+                    $message->user = $message->sender;
                 }
                 return $message;
             })
@@ -141,6 +142,28 @@ class MessageService
             ->get();
 
         return HelperAction::serviceResponse(false, 'Messages retrieved', $messages);
+    }
+
+    public function checkExistingChat($userId): array
+    {
+        $authUserId = auth()->id();
+        $userInfo = User::query()->select('id','full_name','photo')->findOrFail($userId);
+        $check = Message::query()
+            ->where(function ($query) use ($authUserId, $userId) {
+                $query->where('user_id', '=', $authUserId)
+                    ->where('receiver_id', '=', $userId);
+            })
+            ->orWhere(function ($query) use ($authUserId, $userId) {
+                $query->where('user_id', '=', $userId)
+                    ->where('receiver_id', '=', $authUserId);
+            });
+
+        if ($check->exists()) {
+            $data['check'] = $check->first();
+        }
+        $data['check'] = $check;
+        $data['receiver'] = $userInfo;
+        return HelperAction::serviceResponse(false, 'Messages retrieved', $data);
     }
 
 

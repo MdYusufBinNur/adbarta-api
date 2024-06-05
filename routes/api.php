@@ -47,6 +47,7 @@ Route::prefix('v1')->group(function () {
         Route::get('wallet', [WalletController::class, 'wallet']);
         Route::resource('chats', MessageController::class)->only('index','store');
         Route::get('chats/{roomId}', [MessageController::class, 'getMessagesByRoomId']);
+        Route::get('check-chats/{userID}', [MessageController::class, 'checkExistingChat']);
         Route::post('profile-update', [UserController::class, 'profileUpdate']);
         Route::middleware(['checkUserRole:super_admin'])->group(function () {
             Route::resource('categories', CategoryController::class);
