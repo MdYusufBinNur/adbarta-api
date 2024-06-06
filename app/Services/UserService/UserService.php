@@ -14,7 +14,7 @@ class UserService
 {
     public function index($data)
     {
-        $count = $data['per_page'] ?? 10;
+        $count = $data['per_page'] ?? 100;
         $query = User::query()->with('district','sub_district','wallet')->where('role', '=', HelperAction::ROLE_SELLER)->latest();
         if (isset($data['text'])) {
             $query->where('full_name', 'like', '%' . $data['text'] . '%')

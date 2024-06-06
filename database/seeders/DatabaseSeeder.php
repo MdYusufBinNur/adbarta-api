@@ -9,6 +9,7 @@ use App\Models\SubCategory;
 use App\Models\User;
 use App\Models\UserWallet;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
@@ -18,41 +19,95 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::query()->create([
-            'full_name' => 'Ad Barta',
-            'email' => 'super@gmail.com',
-            'uid' => Str::uuid(),
-            'photo' => '',
-            'phone' => '01815625376',
-            'website' => 'https://binnur.xyz',
-            'company' => 'AdBarta',
-            'about' => 'This is about',
-            'role' => 'super_admin',
-            'password' => bcrypt('password'),
-            'status' => 'approved',
-        ]);
-        $user = User::query()->create([
-            'full_name' => 'Yusuf',
-            'email' => 'binnur@tikweb.com',
-            'uid' => Str::uuid(),
-            'photo' => '',
-            'phone' => '01815625375',
-            'website' => 'https://binnur.xyz',
-            'company' => 'AdBarta',
-            'about' => 'This is about',
-            'role' => 'seller',
-            'password' => bcrypt('password'),
-            'status' => 'pending',
-        ]);
+        $this->createFakeUser();
+        $this->createCategory();
+        $this->createProduct();
+    }
 
-        $users = User::query()->get();
-        foreach ($users as $item) {
-            UserWallet::query()->create([
-                'user_id' => $item->id,
-                'available' => 0,
-                'used' => 0,
+    function createCategoryWithSubcategories($name, $subcategories = [], $parentId = null)
+    {
+        if ($parentId) {
+            $category = SubCategory::create([
+                'name' => $name,
+                'category_id' => $parentId,
+                'image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOH2aZnIHWjMQj2lQUOWIL2f4Hljgab0ecZQ&usqp=CAU',
+            ]);
+
+        } else {
+            $category = Category::create([
+                'name' => $name,
+                'image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOH2aZnIHWjMQj2lQUOWIL2f4Hljgab0ecZQ&usqp=CAU',
             ]);
         }
+        foreach ($subcategories as $subcategory) {
+            $this->createCategoryWithSubcategories($subcategory['name'], [], $category->id);
+        }
+    }
+
+    public function createProduct()
+    {
+        $userIds = User::query()->where('id','!=', 1)->pluck('id')->toArray();
+        $featureText = "Super Retina XDR Display: Experience stunning clarity and vivid colors on the ProMotion OLED display, with an adaptive refresh rate for smooth scrolling and responsiveness.
+A15 Bionic Chip: Enjoy lightning-fast performance and efficiency, powering advanced computational photography, gaming, and augmented reality experiences.
+Pro Camera System: Capture professional-quality photos and videos with the triple-camera setup, including an enhanced ultra-wide lens and improved low-light performance.
+Cinematic Mode: Elevate your storytelling with cinematic-style videos, utilizing rack focus and depth of field effects for immersive content creation.
+ProRAW and ProRes Video: Unleash your creativity with advanced photo and video formats, offering unparalleled control and flexibility in post-production editing.
+5G Connectivity: Stay connected at high speeds with 5G capabilities, enabling faster downloads, smoother streaming, and enhanced gaming experiences.
+Longer Battery Life: Power through your day with confidence, thanks to optimized battery life and efficient power management features.
+ProMotion Technology: Enjoy a smoother and more responsive user experience, with adaptive refresh rates up to 120Hz for fluid interactions and scrolling.
+Enhanced Privacy and Security: Protect your personal information with advanced security features, including Face ID and secure enclave technology.
+Sleek and Durable Design: Crafted from durable materials and featuring a stylish, edge-to-edge design, the iPhone 13 Pro is as beautiful as it is powerful, making it the perfect companion for your everyday adventures.";
+        Category::all()->each(function ($category) use ($featureText, $userIds) {
+            // Loop through each category's subcategories
+            $category->sub_category->each(function ($sub_category) use ($category, $featureText, $userIds) {
+                for ($i = 1; $i <= 10; $i++) {
+                    Product::create([
+                        'user_id' => $userIds[array_rand($userIds)],
+                        'category_id' => $category->id,
+                        'sub_category_id' => $sub_category->id,
+                        'slug' => "sample-product-$i",
+                        'title' => "$sub_category->name Product $i",
+                        'size' => 'Medium', // Sample size
+                        'color' => 'Red', // Sample color
+                        'location' => 'Sample Location',
+                        'condition' => 'New', // Sample condition
+                        'brand' => 'Sample Brand',
+                        'edition' => 'Standard', // Sample edition
+                        'product_type' => 'normal', // Sample product type
+                        'priority' => $i, // Sample priority
+                        'expired_at' => now()->addDays(30), // Sample expiration date
+                        'authenticity' => 'Original', // Sample authenticity
+                        'features' => $featureText, // Sample features
+                        'division_id' => 1, // Sample division ID
+                        'district_id' => 1, // Sample district ID
+                        'sub_district_id' => 1, // Sample sub-district ID
+                        'view' => 0, // Initial view count
+                        'status' => 'approved', // Sample status
+                        'points' => 0.0, // Initial points
+                        'price' => 100.0, // Sample price
+                        'contact_name' => 'John Doe', // Sample contact name
+                        'contact_email' => 'john@example.com', // Sample contact email
+                        'contact_number' => '+1234567890', // Sample contact number
+                        'additional_contact_number' => '+0987654321', // Sample additional contact number
+                        'show_contact_number' => true, // Sample show contact number flag
+                        'accept_terms' => true, // Sample accept terms flag
+                    ]);
+                }
+            });
+        });
+
+        Product::all()->each(function ($product) {
+            for ($i = 0; $i < 4; $i++) {
+                ProductImage::query()->create([
+                    'product_id' => $product->id,
+                    'image' => "https://cdn.vuetifyjs.com/images/cards/cooking.png"
+                ]);
+            }
+        });
+    }
+
+    public function createCategory()
+    {
         $categories = [
             [
                 'name' => 'Mobiles',
@@ -408,87 +463,48 @@ class DatabaseSeeder extends Seeder
             $this->createCategoryWithSubcategories($category['name'], $category['subcategories']);
         }
 
-        $this->createProduct();
     }
 
-    function createCategoryWithSubcategories($name, $subcategories = [], $parentId = null)
+    public function createFakeUser()
     {
-        if ($parentId) {
-            $category = SubCategory::create([
-                'name' => $name,
-                'category_id' => $parentId,
-                'image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOH2aZnIHWjMQj2lQUOWIL2f4Hljgab0ecZQ&usqp=CAU',
-            ]);
+        User::query()->create([
+            'full_name' => 'Ad Barta',
+            'email' => 'super@gmail.com',
+            'uid' => Str::uuid(),
+            'photo' => '',
+            'phone' => '01815625376',
+            'website' => 'https://binnur.xyz',
+            'company' => 'AdBarta',
+            'about' => 'This is about',
+            'role' => 'super_admin',
+            'password' => bcrypt('password'),
+            'status' => 'approved',
+        ]);
+        $user = User::query()->create([
+            'full_name' => 'Yusuf',
+            'email' => 'binnur@tikweb.com',
+            'uid' => Str::uuid(),
+            'photo' => '',
+            'phone' => '01815625375',
+            'website' => 'https://binnur.xyz',
+            'company' => 'AdBarta',
+            'about' => 'This is about',
+            'role' => 'seller',
+            'password' => bcrypt('password'),
+            'status' => 'pending',
+        ]);
 
-        } else {
-            $category = Category::create([
-                'name' => $name,
-                'image' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOH2aZnIHWjMQj2lQUOWIL2f4Hljgab0ecZQ&usqp=CAU',
-            ]);
-        }
-        foreach ($subcategories as $subcategory) {
-            $this->createCategoryWithSubcategories($subcategory['name'], [], $category->id);
-        }
-    }
-
-    public function createProduct()
-    {
-        $featureText = "Super Retina XDR Display: Experience stunning clarity and vivid colors on the ProMotion OLED display, with an adaptive refresh rate for smooth scrolling and responsiveness.
-A15 Bionic Chip: Enjoy lightning-fast performance and efficiency, powering advanced computational photography, gaming, and augmented reality experiences.
-Pro Camera System: Capture professional-quality photos and videos with the triple-camera setup, including an enhanced ultra-wide lens and improved low-light performance.
-Cinematic Mode: Elevate your storytelling with cinematic-style videos, utilizing rack focus and depth of field effects for immersive content creation.
-ProRAW and ProRes Video: Unleash your creativity with advanced photo and video formats, offering unparalleled control and flexibility in post-production editing.
-5G Connectivity: Stay connected at high speeds with 5G capabilities, enabling faster downloads, smoother streaming, and enhanced gaming experiences.
-Longer Battery Life: Power through your day with confidence, thanks to optimized battery life and efficient power management features.
-ProMotion Technology: Enjoy a smoother and more responsive user experience, with adaptive refresh rates up to 120Hz for fluid interactions and scrolling.
-Enhanced Privacy and Security: Protect your personal information with advanced security features, including Face ID and secure enclave technology.
-Sleek and Durable Design: Crafted from durable materials and featuring a stylish, edge-to-edge design, the iPhone 13 Pro is as beautiful as it is powerful, making it the perfect companion for your everyday adventures.";
-        Category::all()->each(function ($category) use ($featureText) {
-            // Loop through each category's subcategories
-            $category->sub_category->each(function ($sub_category) use ($category, $featureText) {
-                for ($i = 1; $i <= 10; $i++) {
-                    Product::create([
-                        'user_id' => 2,
-                        'category_id' => $category->id,
-                        'sub_category_id' => $sub_category->id,
-                        'slug' => "sample-product-$i",
-                        'title' => "$sub_category->name Product $i",
-                        'size' => 'Medium', // Sample size
-                        'color' => 'Red', // Sample color
-                        'location' => 'Sample Location',
-                        'condition' => 'New', // Sample condition
-                        'brand' => 'Sample Brand',
-                        'edition' => 'Standard', // Sample edition
-                        'product_type' => 'normal', // Sample product type
-                        'priority' => $i, // Sample priority
-                        'expired_at' => now()->addDays(30), // Sample expiration date
-                        'authenticity' => 'Original', // Sample authenticity
-                        'features' => $featureText, // Sample features
-                        'division_id' => 1, // Sample division ID
-                        'district_id' => 1, // Sample district ID
-                        'sub_district_id' => 1, // Sample sub-district ID
-                        'view' => 0, // Initial view count
-                        'status' => 'approved', // Sample status
-                        'points' => 0.0, // Initial points
-                        'price' => 100.0, // Sample price
-                        'contact_name' => 'John Doe', // Sample contact name
-                        'contact_email' => 'john@example.com', // Sample contact email
-                        'contact_number' => '+1234567890', // Sample contact number
-                        'additional_contact_number' => '+0987654321', // Sample additional contact number
-                        'show_contact_number' => true, // Sample show contact number flag
-                        'accept_terms' => true, // Sample accept terms flag
-                    ]);
-                }
-            });
-        });
-
-        Product::all()->each(function ($product) {
-            for ($i = 0; $i < 4 ; $i++) {
-                ProductImage::query()->create([
-                    'product_id' => $product->id,
-                    'image' => "https://cdn.vuetifyjs.com/images/cards/cooking.png"
+        //Fake User
+        User::factory(15)->create();
+        $users = User::query()->get();
+        foreach ($users as $item) {
+            UserWallet::query()->firstOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'user_id' => $user->id,
+                    'available' => 0,
+                    'used' => 0
                 ]);
-            }
-        });
+        }
     }
 }
