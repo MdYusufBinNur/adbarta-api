@@ -157,12 +157,15 @@ class MessageService
                 $query->where('user_id', '=', $userId)
                     ->where('receiver_id', '=', $authUserId);
             });
-
         if ($check->exists()) {
-            $data['check'] = $check->first();
+            $checkData = $check->first();
+            $userInfo->message = $checkData;
+            $userInfo->room_id = $checkData->room_id;
+            $data['receiver'] = $userInfo;
+        } else {
+            $data['receiver'] = $userInfo;
         }
-        $data['check'] = $check;
-        $data['receiver'] = $userInfo;
+
         return HelperAction::serviceResponse(false, 'Messages retrieved', $data);
     }
 
