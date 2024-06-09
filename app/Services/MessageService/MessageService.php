@@ -3,6 +3,7 @@
 namespace App\Services\MessageService;
 
 use App\Action\HelperAction;
+use App\Events\Chat\MessageSentEvent;
 use App\Http\Resources\Chat\ChatResource;
 use App\Models\Message;
 use App\Models\User;
@@ -92,8 +93,8 @@ class MessageService
         $data['message'] = $text_message;
         $data['room_id'] = $room_id;
 
-        $message = Message::query()->create($data);
-
+        $message = Message::create($data);
+//        broadcast(new MessageSentEvent($message));
         return HelperAction::serviceResponse(false, 'Message sent', $message->fresh('sender', 'receiver'));
     }
 
