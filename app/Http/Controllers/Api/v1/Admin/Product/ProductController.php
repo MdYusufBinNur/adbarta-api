@@ -75,4 +75,15 @@ class ProductController extends Controller
         }
         return HelperAction::jsonResponse($serviceData);
     }
+
+    public function searchProduct(Request $request)
+    {
+        $data = collect($request)->toArray();
+        $serviceData = $this->service->searchProduct($data);
+
+        if ($serviceData['error']) {
+            return HelperAction::errorResponse($serviceData['message']);
+        }
+        return HelperAction::jsonResponse($serviceData);
+    }
 }

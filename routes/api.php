@@ -74,4 +74,5 @@ Route::prefix('v1')->group(function () {
     });
     Route::get('get-ads', [WebController::class, 'allAds']);
     Route::get('get-ads/{slug}', [WebController::class, 'adDetails']);
+    Route::get('search-ad', [ProductController::class, 'searchProduct']);
 });

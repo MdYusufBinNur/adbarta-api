@@ -51,7 +51,7 @@ class ProductService
             return HelperAction::serviceResponse(false, 'Product list', $finalDataset);
         }
         $responseData = Product::with('sub_category', 'category', 'image')
-            ->where('user_id','=', auth()->id())
+            ->where('user_id', '=', auth()->id())
             ->latest()
             ->get();
         return HelperAction::serviceResponse(false, 'Product list', ProductResource::collection($responseData));
@@ -192,7 +192,7 @@ class ProductService
 
     public function walletHistory($productId, $userID)
     {
-        $check = UserWallet::query()->where('user_id','=', $userID)->firstOrFail();
+        $check = UserWallet::query()->where('user_id', '=', $userID)->firstOrFail();
         $product = Product::query()->findOrFail($productId);
         $availablePoints = $check->available - $product->points;
         $totalUsedPoint = $check->used + $product->points;
@@ -208,9 +208,68 @@ class ProductService
                 'points_type' => 'debit',
                 'gateway' => 'system',
                 'status' => 'approved',
-                'trxID' => 'P-'.$productId,
+                'trxID' => 'P-' . $productId,
             ]);
         } catch (Throwable $e) {
         }
     }
+
+    public function searchProduct($data)
+    {
+        // Initialize the query builder for the Product model
+        $query = Product::query();
+
+        // Check if there is a filter for the category and join the categories table
+        if (!empty($data['category'])) {
+            $query->whereHas('category', function ($q) use ($data) {
+                $q->where('name', $data['category']);
+            });
+        }
+
+        // Check if there is a filter for the subcategory and join the subcategories table
+        if (!empty($data['sub_category'])) {
+            $query->whereHas('sub_category', function ($q) use ($data) {
+                $q->where('name', $data['sub_category']);
+            });
+        }
+
+        // Apply other filters if they exist
+        if (!empty($data['title'])) {
+            $query->where('title', 'like', '%' . $data['title'] . '%');
+        }
+
+        if (!empty($data['color'])) {
+            $query->where('color', $data['color']);
+        }
+
+        if (!empty($data['condition'])) {
+            $query->where('condition', $data['condition']);
+        }
+
+        if (!empty($data['brand'])) {
+            $query->where('brand', $data['brand']);
+        }
+
+        if (!empty($data['price_min'])) {
+            $query->where('price', '>=', $data['price_min']);
+        }
+
+        if (!empty($data['price_max'])) {
+            $query->where('price', '<=', $data['price_max']);
+        }
+
+        if (!empty($data['status'])) {
+            $query->where('status', $data['status']);
+        }
+
+        if (!empty($data['location'])) {
+            $query->where('location', 'like', '%' . $data['location'] . '%');
+        }
+
+        // Execute the query and get the results
+        $products = $query->get();
+
+        return $products;
+    }
+
 }
