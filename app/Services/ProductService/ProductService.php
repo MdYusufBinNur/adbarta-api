@@ -220,56 +220,63 @@ class ProductService
         $query = Product::query();
 
         // Check if there is a filter for the category and join the categories table
-        if (!empty($data['category'])) {
+        if (isset($data['category']) && !empty($data['category'])) {
             $query->whereHas('category', function ($q) use ($data) {
                 $q->where('name', $data['category']);
             });
         }
 
         // Check if there is a filter for the subcategory and join the subcategories table
-        if (!empty($data['sub_category'])) {
+        if (isset($data['sub_category']) && !empty($data['sub_category'])) {
             $query->whereHas('sub_category', function ($q) use ($data) {
                 $q->where('name', $data['sub_category']);
             });
         }
 
         // Apply other filters if they exist
-        if (!empty($data['title'])) {
+        if (isset($data['title']) && !empty($data['title'])) {
             $query->where('title', 'like', '%' . $data['title'] . '%');
         }
 
-        if (!empty($data['color'])) {
+        if (isset($data['color']) && !empty($data['color'])) {
             $query->where('color', $data['color']);
         }
 
-        if (!empty($data['condition'])) {
+        if (isset($data['condition']) && !empty($data['condition'])) {
             $query->where('condition', $data['condition']);
         }
 
-        if (!empty($data['brand'])) {
+        if (isset($data['brand']) && !empty($data['brand'])) {
             $query->where('brand', $data['brand']);
         }
 
-        if (!empty($data['price_min'])) {
+        if (isset($data['price_min']) && !empty($data['price_min'])) {
             $query->where('price', '>=', $data['price_min']);
         }
 
-        if (!empty($data['price_max'])) {
+        if (isset($data['price_max']) && !empty($data['price_max'])) {
             $query->where('price', '<=', $data['price_max']);
         }
 
-        if (!empty($data['status'])) {
+        if (isset($data['status']) && !empty($data['status'])) {
             $query->where('status', $data['status']);
         }
 
-        if (!empty($data['location'])) {
+        if (isset($data['location']) && !empty($data['location'])) {
             $query->where('location', 'like', '%' . $data['location'] . '%');
         }
 
         // Execute the query and get the results
         $products = $query->get();
 
-        return $products;
+        $products->transform(function ($product) {
+           return [
+               'id' => $product->id,
+               'slug' => $product->slug,
+               'title' => $product->title,
+           ];
+        });
+        return HelperAction::serviceResponse(false,'Search result', $products);
     }
 
 }
