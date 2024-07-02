@@ -15,10 +15,10 @@ class UserService
     public function index($data)
     {
         $count = $data['per_page'] ?? 100;
-        $query = User::query()->with('district','sub_district','wallet')->where('role', '=', HelperAction::ROLE_SELLER)->latest();
+        $query = User::query()->with('district', 'sub_district', 'wallet')->where('role', '=', HelperAction::ROLE_SELLER)->latest();
         if (isset($data['text'])) {
             $query->where('full_name', 'like', '%' . $data['text'] . '%')
-            ->orWhere('email', 'like', '%' . $data['text'] . '%');
+                ->orWhere('email', 'like', '%' . $data['text'] . '%');
         }
         $users = $query->paginate($count);
         $d['count'] = $users->count();
@@ -39,7 +39,7 @@ class UserService
     public function profile(): JsonResponse
     {
         $userData = new UserResource(User::query()
-            ->with('wallet', )
+            ->with('wallet',)
             ->find(auth()->id()));
         return HelperAction::successResponse('Profile info', $userData);
     }
@@ -59,9 +59,9 @@ class UserService
             DB::beginTransaction();
             $password = null;
             if (isset($data['email']) && $user->email !== $data['email']) {
-                $checkEmail  = User::query()->where('email','=', $data['email'])->exists();
+                $checkEmail = User::query()->where('email', '=', $data['email'])->exists();
                 if ($checkEmail) {
-                    return HelperAction::serviceResponse(true,'Email already taken', null);
+                    return HelperAction::serviceResponse(true, 'Email already taken', null);
                 }
             }
             if (isset($data['password'])) {
@@ -82,7 +82,7 @@ class UserService
             $finalDataset = collect($data)->except('image')->toArray();
             $create = $user->updateOrFail($finalDataset);
             DB::commit();
-            return HelperAction::serviceResponse(false, 'User has been updated', new UserResource($user->fresh('district','sub_district', 'wallet')));
+            return HelperAction::serviceResponse(false, 'User has been updated', new UserResource($user->fresh('district', 'sub_district', 'wallet')));
         } catch (\Exception $exception) {
             DB::rollBack();
             return HelperAction::serviceResponse(true, $exception->getMessage(), null);
@@ -110,24 +110,35 @@ class UserService
         try {
             DB::beginTransaction();
             $password = null;
+            $categories = null;
             if ($data['password']) {
                 $password = bcrypt($data['password']);
             }
+            if (isset($data['categories'])) {
+
+                $categories = $data['categories'];
+            }
+
             if (isset($data['image'])) {
                 $data['photo'] = HelperAction::saveVendorImage($data['image'], 'Vendors');
             }
+
             $data['password'] = $password;
             $data['status'] = 'approved';
             $data['type'] = 'free';
-            $finalDataset = collect($data)->except('image','point')->toArray();
+            $finalDataset = collect($data)->except('image', 'point')->toArray();
             $create = User::query()->create($finalDataset);
             $wallet = UserWallet::query()->create([
                 'user_id' => $create->id,
                 'available' => $data['point'] ?? 0,
                 'used' => 0,
             ]);
+            if ($categories) {
+                $create->categories()->attach($categories);
+            }
+
             DB::commit();
-            return HelperAction::serviceResponse(false, 'User has been created', new UserResource($create->fresh('district','sub_district', 'wallet')));
+            return HelperAction::serviceResponse(false, 'User has been created', new UserResource($create->fresh('district', 'sub_district', 'wallet')));
         } catch (\Exception $exception) {
             DB::rollBack();
             return HelperAction::serviceResponse(true, $exception->getMessage(), null);
@@ -140,12 +151,12 @@ class UserService
     public function addPoint(array $data, string $id)
     {
         $user = User::query()->findOrFail($id);
-        $wallet = UserWallet::query()->where('user_id','=', $id)->firstOrFail();
+        $wallet = UserWallet::query()->where('user_id', '=', $id)->firstOrFail();
         $available = floatval($wallet->available) + floatval($data['points']);
         $wallet->updateOrFail([
             'available' => $available
         ]);
-        return HelperAction::serviceResponse(false,'Wallet point Added', new UserResource($user->fresh('wallet','district', 'sub_district')));
+        return HelperAction::serviceResponse(false, 'Wallet point Added', new UserResource($user->fresh('wallet', 'district', 'sub_district')));
     }
 
 
