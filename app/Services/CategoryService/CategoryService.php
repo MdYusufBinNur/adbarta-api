@@ -18,7 +18,7 @@ class CategoryService
     public function index($data): array
     {
         if (auth()->user() && auth()->user()->role === 'super_admin') {
-            $count = $data['per_page'] ?? 20;
+            $count = $data['per_page'] ?? 50;
             $query = Category::query();
 
             if (isset($data['name'])) {

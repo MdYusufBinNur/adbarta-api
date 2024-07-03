@@ -38,6 +38,7 @@ class UserResource extends JsonResource
             'sub_district_id' => $this?->sub_district_id,
             'type' => $this?->type,
             'wallet' => $this->whenLoaded('wallet'),
+            'categories' => $this->categories
         ];
     }
 }
