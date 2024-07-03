@@ -126,7 +126,7 @@ class UserService
             $data['password'] = $password;
             $data['status'] = 'approved';
             $data['type'] = 'free';
-            $finalDataset = collect($data)->except('image', 'point')->toArray();
+            $finalDataset = collect($data)->except('image', 'point','categories')->toArray();
             $create = User::query()->create($finalDataset);
             $wallet = UserWallet::query()->create([
                 'user_id' => $create->id,
