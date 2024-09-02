@@ -13,6 +13,7 @@ use App\Models\UserWallet;
 use App\Models\WalletHistory;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class ProductService
@@ -78,6 +79,7 @@ class ProductService
                 return HelperAction::serviceResponse(true, 'Insufficient wallet points', null);
 
             }
+            $productData['user_id'] =  auth()->id();
             $createCategory = Product::query()->create($productData);
             if (array_key_exists('image', $data)) {
                 foreach ($data['image'] as $item) {
@@ -92,7 +94,8 @@ class ProductService
             return HelperAction::serviceResponse(false, 'Product added', $createCategory->fresh());
         } catch (Exception $e) {
             DB::rollBack();
-            return HelperAction::serviceResponse(true, $e->getMessage(), null);
+            Log::info('Product Store Service : '. $e->getMessage());
+            return HelperAction::serviceResponse(true, 'Something went wrong!', null);
         }
     }
 
