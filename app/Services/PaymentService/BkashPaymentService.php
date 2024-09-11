@@ -106,7 +106,6 @@ class BkashPaymentService
     {
         try {
             DB::beginTransaction();
-            $paymentFor = $data['payment_for'];
             $auth = $this->checkGrantTokenLifeTime();
             $callback = 'https://adbarta.com';
             $callbackURL = $data['path'] ? $callback . $data['path'] : $callback;
