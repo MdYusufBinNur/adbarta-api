@@ -73,7 +73,7 @@ class WalletService
 
     public function getWalletHistory($data): array
     {
-        $wallet = WalletHistory::query()->with('user')->latest()->get();
+        $wallet = WalletHistory::query()->with('user')->where('status','!=', 'cancelled')->latest()->get();
         return HelperAction::serviceResponse(false, 'Wallet history', UserWalletHistoryResource::collection($wallet));
 
     }

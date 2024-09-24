@@ -20,6 +20,6 @@ class UserWallet extends Model
 
     public function history(): HasMany
     {
-        return $this->hasMany(WalletHistory::class, 'user_wallet_id');
+        return $this->hasMany(WalletHistory::class, 'user_wallet_id')->where('status','!=', 'cancelled');
     }
 }

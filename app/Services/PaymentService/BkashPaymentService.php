@@ -153,7 +153,7 @@ class BkashPaymentService
                     'points' => $amount,
                     'phone' => auth()?->user()?->phone,
                     'gateway' => 'bkashMerchant',
-                    'status' => 'pending',
+                    'status' => 'cancelled',
                     'points_type' => 'credit',
 
                 ]);

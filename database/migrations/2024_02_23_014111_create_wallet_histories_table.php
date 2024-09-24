@@ -18,7 +18,7 @@ return new class extends Migration
             $table->double('points');
             $table->string('points_type'); //credit or debit
             $table->string('gateway'); //bkash, nagad, card
-            $table->enum('status',['approved','not_approved','pending'])->default('pending');
+            $table->enum('status',['approved','not_approved','pending','cancelled'])->default('pending');
             $table->string('trxID')->unique();
             $table->string('name')->nullable();
             $table->string('phone')->nullable();
