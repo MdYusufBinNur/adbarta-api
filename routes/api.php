@@ -76,6 +76,21 @@ Route::prefix('v1')->group(function () {
             auth()->user()->currentAccessToken()->delete();
             return HelperAction::successResponse('Successfully Logout', null);
         });
+
+        /**
+         * Bkash Payment Api's
+         */
+        // Payment Routes for bKash
+        Route::post('bkash-get-token', [\App\Http\Controllers\Api\v1\Payment\BkashController::class,'getToken']);
+        Route::post('bkash-refresh-token', [\App\Http\Controllers\Api\v1\Payment\BkashController::class,'refreshToken']);
+        Route::post('bkash-create-payment', [\App\Http\Controllers\Api\v1\Payment\BkashController::class,'createPayment']);
+        Route::post('bkash-execute-payment', [\App\Http\Controllers\Api\v1\Payment\BkashController::class,'executePayment']);
+        Route::post('bkash-query-payment', [\App\Http\Controllers\Api\v1\Payment\BkashController::class,'queryPayment']);
+        Route::post('bkash-success', [\App\Http\Controllers\Api\v1\Payment\BkashController::class,'bkashSuccess']);
+
+        // Refund Routes for bKash
+//        Route::get('/bkash/refund', [\App\Http\Controllers\Api\v1\Payment\BkashController::class,'index'])->name('bkash-refund');
+//        Route::post('/bkash/refund', 'BkashRefundController@refund')->name('bkash-refund');
     });
     Route::get('get-ads', [WebController::class, 'allAds']);
     Route::get('get-ads/{slug}', [WebController::class, 'adDetails']);

@@ -33,10 +33,10 @@ class BkashPaymentService
 //        $bkash_password = 'sandboxTokenizedUser02@12345';
 //        $bkash_base_url = 'https://tokenized.sandbox.bka.sh/v1.2.0-beta/tokenized';
 //
-        $bkash_app_key = '0HKo8K3ElcDvEAtc1BGG7QpBtc';
-        $bkash_app_secret = 'QvWuUrj1Whs7m0yBi0FAglowJrA9rPBG6SGEYnyyBEVEigGQMQl7';
-        $bkash_username = '01404782909';
-        $bkash_password = 'jF*)>Nh4C4^';
+        $bkash_app_key = 'Da7No1RZf432vCkRBGScPkZ1tc';
+        $bkash_app_secret = 'fhR99ulfGA8ZcWrPZu4cL7DLPiBOFOL3cNMKbSfMXAYAf9fVIkEg';
+        $bkash_username = '01812442234';
+        $bkash_password = '>{W40[@sEpI';
         $bkash_base_url = 'https://tokenized.pay.bka.sh/v1.2.0-beta/tokenized';
 
         $this->app_key = $bkash_app_key;
