@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\v1\Admin\Product\ProductController;
 use App\Http\Controllers\Api\v1\Admin\SubCategoryController;
 use App\Http\Controllers\Api\v1\Auth\AuthController;
 use App\Http\Controllers\Api\v1\MessageController;
+use App\Http\Controllers\Api\v1\Payment\BkashController;
 use App\Http\Controllers\Api\v1\User\UserController;
 use App\Http\Controllers\Api\v1\User\WalletController;
 use App\Http\Controllers\Api\v1\Web\WebController;
@@ -81,12 +82,12 @@ Route::prefix('v1')->group(function () {
          * Bkash Payment Api's
          */
         // Payment Routes for bKash
-        Route::post('bkash-get-token', [\App\Http\Controllers\Api\v1\Payment\BkashController::class,'getToken']);
-        Route::post('bkash-refresh-token', [\App\Http\Controllers\Api\v1\Payment\BkashController::class,'refreshToken']);
-        Route::post('bkash-create-payment', [\App\Http\Controllers\Api\v1\Payment\BkashController::class,'createPayment']);
-        Route::post('bkash-execute-payment', [\App\Http\Controllers\Api\v1\Payment\BkashController::class,'executePayment']);
-        Route::post('bkash-query-payment', [\App\Http\Controllers\Api\v1\Payment\BkashController::class,'queryPayment']);
-        Route::post('bkash-success', [\App\Http\Controllers\Api\v1\Payment\BkashController::class,'bkashSuccess']);
+        Route::post('bkash-get-token', [BkashController::class,'getToken']);
+        Route::post('bkash-refresh-token', [BkashController::class,'refreshToken']);
+        Route::post('bkash-create-payment', [BkashController::class,'createPayment']);
+        Route::post('bkash-execute-payment', [BkashController::class,'executePayment']);
+        Route::post('bkash-query-payment', [BkashController::class,'queryPayment']);
+        Route::post('bkash-success', [BkashController::class,'bkashSuccess']);
 
         // Refund Routes for bKash
 //        Route::get('/bkash/refund', [\App\Http\Controllers\Api\v1\Payment\BkashController::class,'index'])->name('bkash-refund');
