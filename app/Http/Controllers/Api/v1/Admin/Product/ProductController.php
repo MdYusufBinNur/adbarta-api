@@ -9,6 +9,7 @@ use App\Http\Requests\Product\StoreRequest;
 use App\Services\ProductService\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
@@ -80,6 +81,23 @@ class ProductController extends Controller
     {
         $data = collect($request)->toArray();
         $serviceData = $this->service->searchProduct($data);
+
+        if ($serviceData['error']) {
+            return HelperAction::errorResponse($serviceData['message']);
+        }
+        return HelperAction::jsonResponse($serviceData);
+    }
+
+    public function uploadImage(Request $request)
+    {
+        $validate = Validator::make($request->all(),
+            [
+                'image' => 'required|mimes:jpg,png',
+            ]);
+        if ($validate->fails())
+            return HelperAction::errorResponse($validate->errors()->first());
+        $data = collect($request)->toArray();
+        $serviceData = $this->service->uploadImage($data);
 
         if ($serviceData['error']) {
             return HelperAction::errorResponse($serviceData['message']);

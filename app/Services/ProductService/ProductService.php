@@ -79,12 +79,12 @@ class ProductService
                 return HelperAction::serviceResponse(true, 'Insufficient wallet points', null);
 
             }
-            $productData['user_id'] =  auth()->id();
+            $productData['user_id'] = auth()->id();
             $createCategory = Product::query()->create($productData);
             if (array_key_exists('image', $data)) {
                 foreach ($data['image'] as $item) {
                     ProductImage::query()->create([
-                        'image' => HelperAction::saveImage($item, 'Products'),
+                        'image' => $item,
                         'product_id' => $createCategory->id
                     ]);
                 }
@@ -94,7 +94,7 @@ class ProductService
             return HelperAction::serviceResponse(false, 'Product added', $createCategory->fresh());
         } catch (Exception $e) {
             DB::rollBack();
-            Log::info('Product Store Service : '. $e->getMessage());
+            Log::info('Product Store Service : ' . $e->getMessage());
             return HelperAction::serviceResponse(true, 'Something went wrong!', null);
         }
     }
@@ -112,7 +112,7 @@ class ProductService
             if (array_key_exists('image', $data)) {
                 foreach ($data['image'] as $item) {
                     ProductImage::query()->create([
-                        'image' => HelperAction::saveImage($item, 'Products'),
+                        'image' => $item,
                         'product_id' => $id
                     ]);
                 }
@@ -273,13 +273,22 @@ class ProductService
         $products = $query->get();
 
         $products->transform(function ($product) {
-           return [
-               'id' => $product->id,
-               'slug' => $product->slug,
-               'title' => $product->title,
-           ];
+            return [
+                'id' => $product->id,
+                'slug' => $product->slug,
+                'title' => $product->title,
+            ];
         });
-        return HelperAction::serviceResponse(false,'Search result', $products);
+        return HelperAction::serviceResponse(false, 'Search result', $products);
+    }
+
+    public function uploadImage(array $data)
+    {
+        if (array_key_exists('image', $data)) {
+            $image = HelperAction::saveImage($data, 'Products');
+            return HelperAction::serviceResponse(false,'Image uploaded', $image);
+        }
+        return HelperAction::errorResponse('Something went wrong! Please try again');
     }
 
 }

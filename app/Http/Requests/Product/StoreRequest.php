@@ -26,7 +26,7 @@ class StoreRequest extends BaseRequest
             'location' => 'required',
             'price' => 'required',
             'image' => 'required|array',
-            'image.*' => 'mimes:jpg,png',
+//            'image.*' => 'mimes:jpg,png',
             'authenticity' => '',
             'edition' => '',
             'brand' => '',
