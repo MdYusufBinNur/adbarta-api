@@ -78,7 +78,7 @@ class UserService
                 $data['nid_two'] = HelperAction::saveVendorImage($data['nid_two'], 'Vendors');
             }
             if (isset($data['phone'])) {
-                $data['phone'] = $data['phone'] !== null ? $data['phone'] : null;
+                $data['phone'] = $data['phone'] !== 'null' ? $data['phone'] : null;
             }
 
 
