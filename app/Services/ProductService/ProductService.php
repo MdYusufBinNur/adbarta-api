@@ -285,7 +285,7 @@ class ProductService
     public function uploadImage(array $data)
     {
         if (array_key_exists('image', $data)) {
-            $image = HelperAction::saveImage($data, 'Products');
+            $image = HelperAction::saveImage($data['image'], 'Products');
             return HelperAction::serviceResponse(false,'Image uploaded', $image);
         }
         return HelperAction::errorResponse('Something went wrong! Please try again');
