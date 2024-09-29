@@ -163,8 +163,13 @@ class ProductService
         try {
             DB::beginTransaction();
             $check = Product::query()->findOrFail($id);
-            $productData = collect($data)->except('image')->toArray();
-            $update = $check->updateOrFail($data);
+//            $productData = collect($data)->except('image')->toArray();
+            // Prepare product data, ensuring null values or missing fields are handled properly
+            $productData = collect($data)->except('image')->map(function ($value) {
+                // Store as null if the value is empty, null, or 'undefined'
+                return !is_null($value) && $value !== 'undefined' ? $value : null;
+            })->toArray();
+            $update = $check->updateOrFail($productData);
             if (array_key_exists('image', $data)) {
                 foreach ($data['image'] as $item) {
                     ProductImage::query()->create([
