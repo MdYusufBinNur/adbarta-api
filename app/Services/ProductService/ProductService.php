@@ -58,14 +58,61 @@ class ProductService
         return HelperAction::serviceResponse(false, 'Product list', ProductResource::collection($responseData));
     }
 
+//    public function store($data): array
+//    {
+//        try {
+//            DB::beginTransaction();
+//            $checkWallet = UserWallet::query()->where('user_id', '=', auth()->id())->firstOrFail();
+//
+//
+//            $productData = collect($data)->except('image')->toArray();
+//            if ($checkWallet->available >= 2) {
+//                if ($data['product_type'] === 'premium') {
+//                    if ($checkWallet->available < 100) {
+//                        return HelperAction::serviceResponse(true, 'Insufficient wallet points for Top Ad', null);
+//                    }
+//                    $productData['points'] = 100;
+//                } else {
+//                    $productData['points'] = 2;
+//                }
+//            } else {
+//                return HelperAction::serviceResponse(true, 'Insufficient wallet points', null);
+//
+//            }
+//            $productData['user_id'] = auth()->id();
+//            $createCategory = Product::query()->create($productData);
+//            if (array_key_exists('image', $data)) {
+//                foreach ($data['image'] as $item) {
+//                    ProductImage::query()->create([
+//                        'image' => $item,
+//                        'product_id' => $createCategory->id
+//                    ]);
+//                }
+//            }
+//            $this->walletHistory($createCategory->id, auth()->id());
+//            DB::commit();
+//            return HelperAction::serviceResponse(false, 'Product added', $createCategory->fresh());
+//        } catch (Exception $e) {
+//            DB::rollBack();
+//            Log::info('Product Store Service : ' . $e->getMessage());
+//            return HelperAction::serviceResponse(true, 'Something went wrong!', null);
+//        }
+//    }
     public function store($data): array
     {
         try {
             DB::beginTransaction();
+
+            // Get the wallet details of the authenticated user
             $checkWallet = UserWallet::query()->where('user_id', '=', auth()->id())->firstOrFail();
 
+            // Prepare product data, ensuring null values or missing fields are handled properly
+            $productData = collect($data)->except('image')->map(function ($value) {
+                // Store as null if the value is empty, null, or 'undefined'
+                return !is_null($value) && $value !== 'undefined' ? $value : null;
+            })->toArray();
 
-            $productData = collect($data)->except('image')->toArray();
+            // Check if the wallet has sufficient points for the transaction
             if ($checkWallet->available >= 2) {
                 if ($data['product_type'] === 'premium') {
                     if ($checkWallet->available < 100) {
@@ -77,11 +124,16 @@ class ProductService
                 }
             } else {
                 return HelperAction::serviceResponse(true, 'Insufficient wallet points', null);
-
             }
+
+            // Set the user ID for the product
             $productData['user_id'] = auth()->id();
+
+            // Create the product entry
             $createCategory = Product::query()->create($productData);
-            if (array_key_exists('image', $data)) {
+
+            // If images are provided, create product image entries
+            if (array_key_exists('image', $data) && !empty($data['image'])) {
                 foreach ($data['image'] as $item) {
                     ProductImage::query()->create([
                         'image' => $item,
@@ -89,12 +141,16 @@ class ProductService
                     ]);
                 }
             }
+
+            // Log wallet history after adding the product
             $this->walletHistory($createCategory->id, auth()->id());
+
             DB::commit();
             return HelperAction::serviceResponse(false, 'Product added', $createCategory->fresh());
+
         } catch (Exception $e) {
             DB::rollBack();
-            Log::info('Product Store Service : ' . $e->getMessage());
+            Log::info('Product Store Service: ' . $e->getMessage());
             return HelperAction::serviceResponse(true, 'Something went wrong!', null);
         }
     }
@@ -286,7 +342,7 @@ class ProductService
     {
         if (array_key_exists('image', $data)) {
             $image = HelperAction::saveImage($data['image'], 'Products');
-            return HelperAction::serviceResponse(false,'Image uploaded', $image);
+            return HelperAction::serviceResponse(false, 'Image uploaded', $image);
         }
         return HelperAction::errorResponse('Something went wrong! Please try again');
     }
