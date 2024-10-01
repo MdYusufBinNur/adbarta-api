@@ -16,16 +16,16 @@ class StoreRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'category_id' => 'required|exists:categories,id',
-            'sub_category_id' => 'required|exists:sub_categories,id',
-            'title' => 'required|min: 3',
-            'product_type' => 'required|in:normal,premium',
-            'division_id' => 'required|exists:divisions,id',
-            'district_id' => 'required|exists:districts,id',
-            'sub_district_id' => 'required|exists:sub_districts,id',
+            'category_id' => 'exists:categories,id',
+            'sub_category_id' => 'exists:sub_categories,id',
+            'title' => 'min: 3',
+            'product_type' => 'in:normal,premium',
+            'division_id' => 'exists:divisions,id',
+            'district_id' => 'exists:districts,id',
+            'sub_district_id' => 'exists:sub_districts,id',
             'location' => 'required',
             'price' => 'required',
-            'image' => 'required|array',
+            'image' => 'array',
 //            'image.*' => 'mimes:jpg,png',
             'authenticity' => '',
             'edition' => '',
@@ -38,7 +38,7 @@ class StoreRequest extends BaseRequest
     public function messages()
     {
         return [
-            'product_type.required' => "Ad type is required",
+//            'product_type.required' => "Ad type is required",
             'product_type.in' => "Ad type must be Top Ad or Normal Ad",
         ];
     }
