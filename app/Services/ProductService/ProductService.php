@@ -126,6 +126,7 @@ class ProductService
                 return HelperAction::serviceResponse(true, 'Insufficient wallet points', null);
             }
 
+            $productData['category_id'] = $productData['category_id'] ?? 34;
             // Set the user ID for the product
             $productData['user_id'] = auth()->id();
 
