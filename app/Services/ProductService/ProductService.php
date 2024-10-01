@@ -105,7 +105,7 @@ class ProductService
 
             $checkWallet = UserWallet::query()->where('user_id', '=', auth()->id())->firstOrFail();
             $productData = collect($data)->except('image')->map(function ($value) {
-                return !is_null($value) && $value !== 'undefined' ? $value : null;
+                return (!is_null($value) && $value !== 'undefined' && $value !== '') ? $value : null;
             })->toArray();
             if ($checkWallet->available >= 2) {
                 if ($data['product_type'] === 'premium') {
