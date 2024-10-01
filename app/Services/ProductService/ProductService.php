@@ -103,16 +103,10 @@ class ProductService
         try {
             DB::beginTransaction();
 
-            // Get the wallet details of the authenticated user
             $checkWallet = UserWallet::query()->where('user_id', '=', auth()->id())->firstOrFail();
-
-            // Prepare product data, ensuring null values or missing fields are handled properly
             $productData = collect($data)->except('image')->map(function ($value) {
-                // Store as null if the value is empty, null, or 'undefined'
                 return !is_null($value) && $value !== 'undefined' ? $value : null;
             })->toArray();
-
-            // Check if the wallet has sufficient points for the transaction
             if ($checkWallet->available >= 2) {
                 if ($data['product_type'] === 'premium') {
                     if ($checkWallet->available < 100) {
@@ -125,15 +119,13 @@ class ProductService
             } else {
                 return HelperAction::serviceResponse(true, 'Insufficient wallet points', null);
             }
+            $productData['division_id'] = $productData['division_id'] ?? null;
+            $productData['district_id'] = $productData['district_id'] ?? null;
+            $productData['sub_district_id'] = $productData['sub_district_id'] ?? null;
 
             $productData['category_id'] = $productData['category_id'] ?? 34;
-            // Set the user ID for the product
             $productData['user_id'] = auth()->id();
-
-            // Create the product entry
             $createCategory = Product::query()->create($productData);
-
-            // If images are provided, create product image entries
             if (array_key_exists('image', $data) && !empty($data['image'])) {
                 foreach ($data['image'] as $item) {
                     ProductImage::query()->create([
