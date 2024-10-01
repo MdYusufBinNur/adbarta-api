@@ -19,7 +19,7 @@ class CategoryService
     {
         if (auth()->user() && auth()->user()->role === 'super_admin') {
             $count = $data['per_page'] ?? 50;
-            $query = Category::query();
+            $query = Category::query()->where('active','=', 1);
 
             if (isset($data['name'])) {
                 $query->where('name', 'like', '%' . $data['name'] . '%');
