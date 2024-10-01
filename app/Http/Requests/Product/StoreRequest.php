@@ -16,13 +16,13 @@ class StoreRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'category_id' => 'nullable|exists:categories,id',
-            'sub_category_id' => 'nullable|exists:sub_categories,id',
+//            'category_id' => 'nullable|exists:categories,id',
+//            'sub_category_id' => 'nullable|exists:sub_categories,id',
             'title' => 'min: 3',
             'product_type' => 'in:normal,premium',
-            'division_id' => 'nullable|exists:divisions,id',
-            'district_id' => 'nullable|exists:districts,id',
-            'sub_district_id' => 'nullable|exists:sub_districts,id',
+//            'division_id' => 'nullable|exists:divisions,id',
+//            'district_id' => 'nullable|exists:districts,id',
+//            'sub_district_id' => 'nullable|exists:sub_districts,id',
             'location' => '',
             'price' => '',
             'image' => 'nullable|array',
