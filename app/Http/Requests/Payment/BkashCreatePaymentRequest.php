@@ -24,7 +24,7 @@ class BkashCreatePaymentRequest extends BaseRequest
     public function rules()
     {
         return [
-            'amount' => 'required|integer|min:50',
+            'amount' => 'required|integer',
         ];
     }
 }
