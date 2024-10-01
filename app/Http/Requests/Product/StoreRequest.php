@@ -16,8 +16,8 @@ class StoreRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'category_id' => 'sometimes|exists:categories,id',
-            'sub_category_id' => 'sometimes|exists:sub_categories,id',
+//            'category_id' => 'sometimes|exists:categories,id',
+//            'sub_category_id' => 'sometimes|exists:sub_categories,id',
             'title' => 'min: 3',
             'product_type' => 'in:normal,premium',
             'division_id' => 'sometimes|exists:divisions,id',
