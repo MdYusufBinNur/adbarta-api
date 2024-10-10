@@ -44,6 +44,7 @@ class AuthService
         $data['password'] = bcrypt($request->password);
         $data['role'] = 'seller';
         $data['remember_token'] = rand(1111, 9999);
+        $data['status'] = 'approved';
         try {
             DB::beginTransaction();
             $user = User::query()->create($data);
