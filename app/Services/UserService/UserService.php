@@ -80,8 +80,18 @@ class UserService
             if (isset($data['phone'])) {
                 $data['phone'] = $data['phone'] !== 'null' ? $data['phone'] : null;
             }
-
-
+            if (isset($data['district_id'])) {
+                $data['district_id'] = $data['district_id'] !== 'null' ? $data['district_id'] : null;
+            }
+            if (isset($data['sub_district_id'])) {
+                $data['sub_district_id'] = $data['sub_district_id'] !== 'null' ? $data['sub_district_id'] : null;
+            }
+            if (isset($data['street'])) {
+                $data['street'] = $data['street'] !== 'null' ? $data['street'] : null;
+            }
+            if (isset($data['dob'])) {
+                $data['dob'] = $data['dob'] !== 'null' ? $data['dob'] : null;
+            }
 
             $finalDataset = collect($data)->except('image')->toArray();
             $create = $user->updateOrFail($finalDataset);
