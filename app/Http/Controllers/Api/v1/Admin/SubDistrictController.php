@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Api\v1\Admin;
 
 use App\Action\HelperAction;
-use App\Helper\Helper;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Api\District\DistrictResource;
 use App\Models\District;
 use App\Models\SubDistrict;
 use Exception;
@@ -44,6 +42,36 @@ class SubDistrictController extends Controller
         } catch (Exception $exception) {
             return HelperAction::errorResponse($exception->getMessage());
         }
-
     }
+    public function update(Request $request, $id): JsonResponse
+    {
+        $validator = Validator::make($request->all(),
+            [
+                'district_id' => 'sometimes|required|exists:districts,id',
+                'name' => 'sometimes|required'
+            ]);
+        if ($validator->fails())
+            return HelperAction::validationResponse($validator->errors()->first());
+        try {
+            $check = SubDistrict::query()->findOrFail($id);
+            $check->updateOrFail($request->toArray());
+//            SubDistrict::query()->insert($request->all());
+            return HelperAction::successResponse('List', $check->refresh());
+        } catch (Exception $exception) {
+            return HelperAction::errorResponse($exception->getMessage());
+        }
+    }
+    public function destroy($id): JsonResponse
+    {
+        try {
+            $check = SubDistrict::query()->findOrFail($id);
+            $check->delete();
+//            SubDistrict::query()->insert($request->all());
+            return HelperAction::successResponse('Deleted', null);
+        } catch (Exception $exception) {
+            return HelperAction::errorResponse($exception->getMessage());
+        }
+    }
+
+
 }

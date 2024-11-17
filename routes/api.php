@@ -58,7 +58,7 @@ Route::prefix('v1')->group(function () {
         Route::post('profile-update', [UserController::class, 'profileUpdate']);
         Route::middleware(['checkUserRole:super_admin'])->group(function () {
             Route::resource('districts', DistrictController::class);
-            Route::post('subs', [SubDistrictController::class, 'store']);
+            Route::resource('subs', SubDistrictController::class);
             Route::post('update-district', [DistrictController::class, 'updateStatus']);
             Route::get('sub-district/{id}', [DistrictController::class, 'getSubs']);
             Route::get('active-sub', [SubDistrictController::class, 'activeSubDistrict']);
