@@ -61,6 +61,8 @@ Route::prefix('v1')->group(function () {
             Route::post('subs', [SubDistrictController::class, 'store']);
             Route::post('update-district', [DistrictController::class, 'updateStatus']);
             Route::get('sub-district/{id}', [DistrictController::class, 'getSubs']);
+            Route::get('active-sub', [SubDistrictController::class, 'activeSubDistrict']);
+            Route::get('active-district', [SubDistrictController::class, 'activeDistrict']);
 
             Route::resource('categories', CategoryController::class);
             Route::resource('sub-categories', SubCategoryController::class);
