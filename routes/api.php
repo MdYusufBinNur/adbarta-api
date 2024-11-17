@@ -3,15 +3,16 @@
 use App\Action\HelperAction;
 use App\Http\Controllers\Api\v1\Admin\AdminHomeController;
 use App\Http\Controllers\Api\v1\Admin\CategoryController;
+use App\Http\Controllers\Api\v1\Admin\DistrictController;
 use App\Http\Controllers\Api\v1\Admin\Product\ProductController;
 use App\Http\Controllers\Api\v1\Admin\SubCategoryController;
+use App\Http\Controllers\Api\v1\Admin\SubDistrictController;
 use App\Http\Controllers\Api\v1\Auth\AuthController;
 use App\Http\Controllers\Api\v1\MessageController;
 use App\Http\Controllers\Api\v1\Payment\BkashController;
 use App\Http\Controllers\Api\v1\User\UserController;
 use App\Http\Controllers\Api\v1\User\WalletController;
 use App\Http\Controllers\Api\v1\Web\WebController;
-use App\Services\AdminService\AdminService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -51,11 +52,16 @@ Route::prefix('v1')->group(function () {
         Route::post('verify-user', [AuthController::class, 'checkVerificationCodeValidity']);
         Route::get('profile', [UserController::class, 'profile']);
         Route::get('wallet', [WalletController::class, 'wallet']);
-        Route::resource('chats', MessageController::class)->only('index','store');
+        Route::resource('chats', MessageController::class)->only('index', 'store');
         Route::get('chats/{roomId}', [MessageController::class, 'getMessagesByRoomId']);
         Route::get('check-chats/{userID}', [MessageController::class, 'checkExistingChat']);
         Route::post('profile-update', [UserController::class, 'profileUpdate']);
         Route::middleware(['checkUserRole:super_admin'])->group(function () {
+            Route::resource('districts', DistrictController::class);
+            Route::post('subs', [SubDistrictController::class, 'store']);
+            Route::post('update-district', [DistrictController::class, 'updateStatus']);
+            Route::get('sub-district/{id}', [DistrictController::class, 'getSubs']);
+
             Route::resource('categories', CategoryController::class);
             Route::resource('sub-categories', SubCategoryController::class);
             Route::resource('users', UserController::class);
@@ -66,7 +72,7 @@ Route::prefix('v1')->group(function () {
             Route::post('change-status/{changeStatus}', [WalletController::class, 'changeStatus']);
         });
         Route::resource('products', ProductController::class);
-        Route::post('upload-image', [ProductController::class,'uploadImage']);
+        Route::post('upload-image', [ProductController::class, 'uploadImage']);
         Route::post('submit-transaction', [WalletController::class, 'saveTransactionId']);
 
         Route::get('signout', function () {
@@ -83,12 +89,12 @@ Route::prefix('v1')->group(function () {
          * Bkash Payment Api's
          */
         // Payment Routes for bKash
-        Route::post('bkash-get-token', [BkashController::class,'getToken']);
-        Route::post('bkash-refresh-token', [BkashController::class,'refreshToken']);
-        Route::post('bkash-create-payment', [BkashController::class,'createPayment']);
-        Route::post('bkash-execute-payment', [BkashController::class,'executePayment']);
-        Route::post('bkash-query-payment', [BkashController::class,'queryPayment']);
-        Route::post('bkash-success', [BkashController::class,'bkashSuccess']);
+        Route::post('bkash-get-token', [BkashController::class, 'getToken']);
+        Route::post('bkash-refresh-token', [BkashController::class, 'refreshToken']);
+        Route::post('bkash-create-payment', [BkashController::class, 'createPayment']);
+        Route::post('bkash-execute-payment', [BkashController::class, 'executePayment']);
+        Route::post('bkash-query-payment', [BkashController::class, 'queryPayment']);
+        Route::post('bkash-success', [BkashController::class, 'bkashSuccess']);
 
         // Refund Routes for bKash
 //        Route::get('/bkash/refund', [\App\Http\Controllers\Api\v1\Payment\BkashController::class,'index'])->name('bkash-refund');
