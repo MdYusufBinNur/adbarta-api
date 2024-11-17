@@ -22,6 +22,10 @@ class DistrictController extends Controller
         return $this->services->districtIndex();
     }
 
+    public function store(Request $request): JsonResponse
+    {
+        return $this->services->districtStore($request);
+    }
     public function update(Request $request, District $district): JsonResponse
     {
         return $this->services->districtUpdate($request, $district);

@@ -51,6 +51,14 @@ class AdminService
 
         return HelperAction::errorResponse('Something went wrong!');
     }
+    public function districtStore(Request $request): JsonResponse
+    {
+        $update = District::query()->create($request->all());
+        if ($update)
+            return HelperAction::successResponse('District', $update->refresh());
+
+        return HelperAction::errorResponse('Something went wrong!');
+    }
 
     public function districtDestroy(District $district): JsonResponse
     {
