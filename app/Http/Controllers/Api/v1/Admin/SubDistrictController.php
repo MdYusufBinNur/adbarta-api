@@ -24,9 +24,10 @@ class SubDistrictController extends Controller
 
     public function activeSubDistrict(): JsonResponse
     {
-        $locations =  SubDistrict::query()->with('district')->get();
+        $locations = SubDistrict::query()->with('district')->get();
         return HelperAction::successResponse('location', $locations);
     }
+
     public function store(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(),
@@ -43,6 +44,7 @@ class SubDistrictController extends Controller
             return HelperAction::errorResponse($exception->getMessage());
         }
     }
+
     public function update(Request $request, $id): JsonResponse
     {
         $validator = Validator::make($request->all(),
@@ -54,18 +56,22 @@ class SubDistrictController extends Controller
             return HelperAction::validationResponse($validator->errors()->first());
         try {
             $check = SubDistrict::query()->findOrFail($id);
-            $check->updateOrFail($request->toArray());
+            $up = $check->updateOrFail($request->toArray());
 //            SubDistrict::query()->insert($request->all());
             return HelperAction::successResponse('List', $check->refresh());
         } catch (Exception $exception) {
             return HelperAction::errorResponse($exception->getMessage());
+        } catch (\Throwable $exception) {
+            return HelperAction::errorResponse($exception->getMessage());
+
         }
     }
+
     public function destroy($id): JsonResponse
     {
         try {
             $check = SubDistrict::query()->findOrFail($id);
-            $check->delete();
+            $update = $check->delete();
 //            SubDistrict::query()->insert($request->all());
             return HelperAction::successResponse('Deleted', null);
         } catch (Exception $exception) {
