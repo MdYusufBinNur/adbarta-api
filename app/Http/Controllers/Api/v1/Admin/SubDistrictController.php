@@ -33,7 +33,7 @@ class SubDistrictController extends Controller
         $validator = Validator::make($request->all(),
             [
                 'district_id' => 'required|exists:districts,id',
-                'name' => 'required|unique:sub_districts,name'
+                'name' => 'required'
             ]);
         if ($validator->fails())
             return HelperAction::validationResponse($validator->errors()->first());
