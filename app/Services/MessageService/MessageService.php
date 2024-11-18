@@ -7,8 +7,10 @@ use App\Events\Chat\MessageSentEvent;
 use App\Http\Resources\Chat\ChatResource;
 use App\Models\Message;
 use App\Models\User;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Intervention\Image\Facades\Image;
 
 class MessageService
@@ -94,6 +96,22 @@ class MessageService
         $data['room_id'] = $room_id;
 
         $message = Message::create($data);
+
+        $client = new Client();
+        $nodeUrl = 'https://socket.adbarta.com'; // Add this in .env, e.g., http://127.0.0.1:8081
+        try {
+            $client->post($nodeUrl . '/emit-message', [
+                'json' => [
+                    'user_id' => $receiver_id,
+                    'room_id' => $room_id,
+                    'message' => $message->fresh(['sender', 'receiver']),
+                ],
+            ]);
+        } catch (\Exception $e) {
+            Log::info('Node.js Server Error: ' . $e->getMessage());
+        }
+
+
 //        broadcast(new MessageSentEvent($message));
         return HelperAction::serviceResponse(false, 'Message sent', $message->fresh('sender', 'receiver'));
     }
