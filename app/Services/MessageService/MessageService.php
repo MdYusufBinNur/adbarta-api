@@ -157,8 +157,15 @@ class MessageService
     public function getMessagesByRoomId($room_id)
     {
         // Retrieve messages where the receiver is the specified ID and the sender is the authenticated user
-        $messages = Message::query()->where('room_id', $room_id)
-            ->get();
+
+        $authUserId = auth()->id();
+        Message::query()->latest()
+            ->where('user_id', '=', $authUserId)
+            ->orWhere('receiver_id', '=', $authUserId)
+            ->where('seen', '=', 0)
+            ->first()
+            ->update(['seen' => 1]);
+        $messages = Message::query()->where('room_id', $room_id)->get();
 
         return HelperAction::serviceResponse(false, 'Messages retrieved', $messages);
     }
