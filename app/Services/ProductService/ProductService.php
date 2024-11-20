@@ -194,7 +194,7 @@ class ProductService
     {
         try {
             $count = $data['per_page'] ?? 20;
-            $query = Product::query()->latest()
+            $query = Product::query()
                 ->with('image')
                 ->where('status', '=', HelperAction::PRODUCT_STATUS_APPROVED)
                 ->where('status', '!=', HelperAction::PRODUCT_STATUS_SOLD);
@@ -217,9 +217,10 @@ class ProductService
                 $query->where('category_id', '=', $data['category_id']);
             }
 
-            // Ensure Premium products are at the top
-            $responseData = $query->orderByRaw("FIELD(product_type, 'Premium') DESC")
-                ->orderBy('created_at', 'desc')
+            // Sort by Premium first, then by latest
+            $responseData = $query
+                ->orderByRaw("CASE WHEN product_type = 'premium' THEN 1 ELSE 2 END") // Premium first
+                ->orderBy('created_at', 'desc') // Then latest
                 ->paginate($count);
 
             $paginationData = [
