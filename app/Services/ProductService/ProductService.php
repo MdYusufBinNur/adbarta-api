@@ -194,7 +194,7 @@ class ProductService
     {
         try {
             $count = $data['per_page'] ?? 20;
-            $query = Product::query()
+            $query = Product::query()->latest()
                 ->with('image')
                 ->where('status', '=', HelperAction::PRODUCT_STATUS_APPROVED)
                 ->where('status', '!=', HelperAction::PRODUCT_STATUS_SOLD);
