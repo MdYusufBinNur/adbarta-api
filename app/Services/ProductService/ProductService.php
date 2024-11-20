@@ -213,7 +213,7 @@ class ProductService
             if (isset($data['category_id'])) {
                 $query->where('category_id', '=', $data['category_id']);
             }
-            $responseData = $query->orderBy('ad_type','desc')->paginate($count);
+            $responseData = $query->orderBy('product_type','desc')->paginate($count);
             $paginationData = [
                 'count' => $responseData->count(),
                 'current_page' => $responseData->currentPage(),
