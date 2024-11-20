@@ -27,7 +27,7 @@ class ProductResource extends JsonResource
             'slug' => $this->slug,
             'title' => $this->title,
             'size' => $this->size ?? '',
-            'ad_type' => $this->product_type === 'Premium' ? 'Top' : "Normal",
+            'ad_type' => $this->product_type,
             'color' => $this->color ??'',
             'location' => $this->location ?? '',
             'condition' => $this->condition ?? '',
