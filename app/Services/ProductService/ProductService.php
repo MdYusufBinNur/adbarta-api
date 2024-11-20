@@ -198,6 +198,7 @@ class ProductService
                 ->with('image')
                 ->where('status', '=', HelperAction::PRODUCT_STATUS_APPROVED)
                 ->where('status', '!=', HelperAction::PRODUCT_STATUS_SOLD);
+
             if (isset($data['text'])) {
                 $query->where('name', 'like', '%' . $data['name'] . '%')
                     ->orWhereHas('category', function ($q) use ($data) {
@@ -207,13 +208,20 @@ class ProductService
                         $q->where('name', 'like', '%' . $data['name'] . '%');
                     });
             }
+
             if (isset($data['sub_category_id'])) {
                 $query->where('sub_category_id', '=', $data['sub_category_id']);
             }
+
             if (isset($data['category_id'])) {
                 $query->where('category_id', '=', $data['category_id']);
             }
-            $responseData = $query->orderBy('product_type','desc')->paginate($count);
+
+            // Ensure Premium products are at the top
+            $responseData = $query->orderByRaw("FIELD(product_type, 'Premium') DESC")
+                ->orderBy('created_at', 'desc')
+                ->paginate($count);
+
             $paginationData = [
                 'count' => $responseData->count(),
                 'current_page' => $responseData->currentPage(),
@@ -226,10 +234,12 @@ class ProductService
                 'next_page' => $responseData->currentPage() + 1 <= $responseData->lastPage() ? $responseData->currentPage() + 1 : $responseData->lastPage(),
                 'prev_page' => $responseData->currentPage() - 1 < 0 ? $responseData->currentPage() : $responseData->currentPage() - 1,
             ];
+
             $finalDataset = [
                 'products' => ProductResource::collection($responseData),
                 'pagination' => $paginationData,
             ];
+
             return HelperAction::serviceResponse(false, 'Product list', $finalDataset);
         } catch (Throwable $exception) {
             return HelperAction::serviceResponse(true, $exception->getMessage(), null);
