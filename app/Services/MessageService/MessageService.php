@@ -161,8 +161,8 @@ class MessageService
 
         $authUserId = auth()->id();
         Message::query()->latest()
-            ->where('user_id', '=', $authUserId)
-            ->orWhere('receiver_id', '=', $authUserId)
+            ->where('receiver_id', '=', $authUserId)
+//            ->orWhere('receiver_id', '=', $authUserId)
             ->where('seen', '=', 0)
             ->first()
             ->update(['seen' => 1]);
