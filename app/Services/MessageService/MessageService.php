@@ -154,7 +154,7 @@ class MessageService
         return $check_room_one ? $check_room_one->room_id : $check_room_two->room_id;
     }
 
-    public function getMessagesByRoomId($room_id)
+    public function getMessagesByRoomId($room_id): array
     {
         // Retrieve messages where the receiver is the specified ID and the sender is the authenticated user
 
@@ -168,6 +168,15 @@ class MessageService
         $messages = Message::query()->where('room_id', $room_id)->get();
 
         return HelperAction::serviceResponse(false, 'Messages retrieved', $messages);
+    }
+
+    public function getUnreadCount(): array
+    {
+        $check = Message::query()->where('user_id','!=', auth()->id())
+            ->where('receiver_id','=', auth()->id())
+            ->where('seen','=', 0)
+            ->first();
+        return HelperAction::serviceResponse(false,'unread message', $check);
     }
 
     public function checkExistingChat($userId): array

@@ -55,6 +55,7 @@ Route::prefix('v1')->group(function () {
         Route::resource('chats', MessageController::class)->only('index', 'store');
         Route::get('chats/{roomId}', [MessageController::class, 'getMessagesByRoomId']);
         Route::get('check-chats/{userID}', [MessageController::class, 'checkExistingChat']);
+        Route::get('get-unread', [MessageController::class, 'getUnreadCount']);
         Route::post('profile-update', [UserController::class, 'profileUpdate']);
         Route::middleware(['checkUserRole:super_admin'])->group(function () {
             Route::resource('districts', DistrictController::class);

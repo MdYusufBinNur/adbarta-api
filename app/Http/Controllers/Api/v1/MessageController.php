@@ -44,6 +44,15 @@ class MessageController extends Controller
         return HelperAction::jsonResponse($serviceData);
     }
 
+    public function getUnreadCount(): JsonResponse
+    {
+        $serviceData = $this->service->getUnreadCount();
+        if ($serviceData['error']) {
+            return HelperAction::errorResponse($serviceData['message']);
+        }
+        return HelperAction::jsonResponse($serviceData);
+    }
+
     public function checkExistingChat($userId)
     {
         $serviceData = $this->service->checkExistingChat($userId);
