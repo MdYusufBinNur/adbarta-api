@@ -172,11 +172,16 @@ class MessageService
 
     public function getUnreadCount(): array
     {
-        $check = Message::query()->where('user_id','!=', auth()->id())
+        $check = Message::query()
             ->where('receiver_id','=', auth()->id())
-            ->where('seen','=', 0)
+            ->latest()
             ->first();
-        return HelperAction::serviceResponse(false,'unread message', $check);
+
+        if ($check->seen === 0) {
+            return HelperAction::serviceResponse(false,'unread message', $check);
+        }
+        return HelperAction::serviceResponse(false,'unread message', null);
+
     }
 
     public function checkExistingChat($userId): array
