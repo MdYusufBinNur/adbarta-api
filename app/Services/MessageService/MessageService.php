@@ -176,12 +176,10 @@ class MessageService
         $check = Message::query()
             ->where('receiver_id','=', auth()->id())
             ->latest()
-            ->first();
+            ->limit(1)
+            ->get();
 
-        if ($check->seen === 0) {
-            return HelperAction::serviceResponse(false,'unread message', $check);
-        }
-        return HelperAction::serviceResponse(false,'unread message', null);
+        return HelperAction::serviceResponse(false,'unread message', $check);
 
     }
 
