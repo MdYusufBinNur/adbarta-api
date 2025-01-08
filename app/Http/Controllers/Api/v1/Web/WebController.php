@@ -4,10 +4,14 @@ namespace App\Http\Controllers\Api\v1\Web;
 
 use App\Action\HelperAction;
 use App\Http\Controllers\Controller;
+use App\Jobs\Support\ContactSupportJob;
+use App\Models\Contact;
 use App\Services\CategoryService\CategoryService;
 use App\Services\ProductService\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use PHPUnit\TextUI\Configuration\Constant;
 
 class WebController extends Controller
 {
@@ -86,4 +90,19 @@ class WebController extends Controller
         return HelperAction::jsonResponse($serviceData);
     }
 
+    public function sendSupportMail(Request $request)
+    {
+        $data['first_name'] = $request->first_name;
+        $data['last_name'] = $request->last_name;
+        $data['subject'] = $request->subject;
+        $data['email'] = $request->email;
+        $data['message'] = $request->message;
+        try {
+            $contact = Contact::query()->create($data);
+            dispatch(new ContactSupportJob($contact->id));
+            return HelperAction::successResponse('Your mail hase been sent', null);
+        } catch (\Exception $e) {
+            return HelperAction::errorResponse('Please try again later!');
+        }
+    }
 }

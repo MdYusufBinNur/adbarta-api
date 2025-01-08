@@ -48,6 +48,8 @@ Route::prefix('v1')->group(function () {
     Route::get('get-sub-districts/{id}', [WebController::class, 'getSubDistricts']);
     Route::get('get-district', [WebController::class, 'getDistrict']);
     Route::get('sub-category-list/{categoryId}', [WebController::class, 'getSubCategories']);
+    Route::post('mail-us', [WebController::class, 'sendSupportMail']);
+
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('verify-user', [AuthController::class, 'checkVerificationCodeValidity']);
         Route::get('profile', [UserController::class, 'profile']);
