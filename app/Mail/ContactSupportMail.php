@@ -16,7 +16,10 @@ class ContactSupportMail extends Mailable
     /**
      * Create a new message instance.
      */
-    private $name, $email, $subjects, $text;
+    public $name;
+    public $email;
+    public $subjects;
+    public $text;
 
     public function __construct($name, $email, $subjects, $text)
     {
