@@ -10,6 +10,7 @@ use App\Services\CategoryService\CategoryService;
 use App\Services\ProductService\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use PHPUnit\TextUI\Configuration\Constant;
 
@@ -99,6 +100,7 @@ class WebController extends Controller
         $data['message'] = $request->message;
         try {
             $contact = Contact::query()->create($data);
+            Log::info('Support Created == > '.$contact->id);
             dispatch(new ContactSupportJob($contact->id));
             return HelperAction::successResponse('Your mail hase been sent', null);
         } catch (\Exception $e) {
