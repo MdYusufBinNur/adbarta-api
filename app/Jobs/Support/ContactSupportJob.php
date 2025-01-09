@@ -39,7 +39,7 @@ class ContactSupportJob implements ShouldQueue
             $email = $contact->email;
             $subject = $contact->subject;
             $text = $contact->message;
-            Mail::to('adbartaltd@gmail.com')->send(new ContactSupportMail($name, $email, $subject, $text));
+            Mail::to(env('SUPPORT_EMAIL','adbartaltd@gmail.com'))->send(new ContactSupportMail($name, $email, $subject, $text));
         } catch (\Exception $e) {
             report($e->getMessage());
         }
