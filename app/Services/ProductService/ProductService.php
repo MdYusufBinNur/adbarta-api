@@ -21,7 +21,7 @@ class ProductService
     public function index($data): array
     {
         if (auth()->user() && auth()->user()->role === 'super_admin') {
-            $count = $data['per_page'] ?? 20;
+            $count = $data['per_page'] ?? 1000;
             $query = Product::query()->with('category', 'sub_category', 'user', 'image');
 
             if (isset($data['name'])) {
@@ -193,7 +193,7 @@ class ProductService
     public function getAllProducts($data): array
     {
         try {
-            $count = $data['per_page'] ?? 20;
+            $count = $data['per_page'] ?? 1000;
             $query = Product::query()
                 ->with('image')
                 ->where('status', '=', HelperAction::PRODUCT_STATUS_APPROVED)
