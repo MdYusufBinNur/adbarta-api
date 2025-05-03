@@ -98,6 +98,7 @@ class WebController extends Controller
         $data['subject'] = $request->subject;
         $data['email'] = $request->email;
         $data['message'] = $request->message;
+        $data['mobile'] = $request->mobile;
         try {
             $contact = Contact::query()->create($data);
             Log::info('Support Created == > '.$contact->id);
