@@ -18,7 +18,7 @@
             </div>
             <div class="mb-3">
                 <label class="form-label fw-bold">Subject:</label>
-                <p class="form-control-plaintext">{{ $subject ?? ''}}</p>
+                <p class="form-control-plaintext">{{ $subjects ?? ''}}</p>
             </div>
             <div class="mb-3">
                 <label class="form-label fw-bold">Message:</label>

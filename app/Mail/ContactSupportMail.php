@@ -33,7 +33,7 @@ class ContactSupportMail extends Mailable
 
     public function build()
     {
-        return $this->subject($this->subject ?? 'Support')
+        return $this->subject($this->subjects ?? 'Support')
             ->view('mail.contact_support_mail');
     }
 }
