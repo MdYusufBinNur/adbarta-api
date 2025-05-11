@@ -20,13 +20,15 @@ class ContactSupportMail extends Mailable
     public $email;
     public $subjects;
     public $text;
+    public $mobile;
 
-    public function __construct($name, $email, $subjects, $text)
+    public function __construct($name, $email, $subjects, $text, $mobile)
     {
         $this->name = $name;
         $this->email = $email;
         $this->subjects = $subjects;
         $this->text = $text;
+        $this->mobile = $mobile;
     }
 
     public function build()

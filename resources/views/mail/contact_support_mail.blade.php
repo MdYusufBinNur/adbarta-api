@@ -13,6 +13,10 @@
                 <p class="form-control-plaintext">{{ $email ?? ''}}</p>
             </div>
             <div class="mb-3">
+                <label class="form-label fw-bold">Mobile:</label>
+                <p class="form-control-plaintext">{{ $mobile ?? ''}}</p>
+            </div>
+            <div class="mb-3">
                 <label class="form-label fw-bold">Subject:</label>
                 <p class="form-control-plaintext">{{ $subject ?? ''}}</p>
             </div>
