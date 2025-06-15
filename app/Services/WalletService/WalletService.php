@@ -115,7 +115,7 @@ class WalletService
             ->latest()
             ->get()
             ->map(function ($item) {
-                $item->created_at = Carbon::parse($item->created_at)->format('F j, Y, g:i A');
+                $item->date = Carbon::parse($item->created_at)->format('F j, Y, g:i A');
                 // Ensure full_name is not null or empty
                 $item->user = $item->user ? (object)[
                     'id' => $item->user->id,
