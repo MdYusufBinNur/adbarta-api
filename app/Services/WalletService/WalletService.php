@@ -102,4 +102,14 @@ class WalletService
             return HelperAction::serviceResponse(true, $e->getMessage(), null);
         }
     }
+
+    public function allTopUpRecords(array $data): array
+    {
+        $info = WalletHistory::query()
+            ->where('point_type','=','credit')
+            ->where('gateway','like','%bkash%')
+            ->latest()
+            ->get();
+        return HelperAction::serviceResponse(false,'TopUp List', $info);
+    }
 }

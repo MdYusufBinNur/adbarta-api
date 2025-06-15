@@ -74,6 +74,7 @@ Route::prefix('v1')->group(function () {
             Route::post('add-point/{id}', [WalletController::class, 'addWalletCredit']);
             Route::get('get-wallet-histories', [WalletController::class, 'getWalletHistory']);
             Route::get('get-historical-data', [AdminHomeController::class, 'homeData']);
+            Route::get('get-top-up-data', [WalletController::class, 'allTopUpRecords']);
             Route::post('change-status/{changeStatus}', [WalletController::class, 'changeStatus']);
         });
         Route::resource('products', ProductController::class);

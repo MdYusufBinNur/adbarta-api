@@ -73,4 +73,15 @@ class WalletController extends Controller
         return HelperAction::jsonResponse($serviceData);
     }
 
+    public function allTopUpRecords(Request $request): JsonResponse
+    {
+        $data = collect($request)->except(['_method', '/' . $request->path()])->toArray();
+        $serviceData = $this->service->allTopUpRecords($data);
+
+        if ($serviceData['error']) {
+            return HelperAction::errorResponse($serviceData['message']);
+        }
+        return HelperAction::jsonResponse($serviceData);
+    }
+
 }
