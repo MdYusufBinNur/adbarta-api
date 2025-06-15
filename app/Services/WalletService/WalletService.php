@@ -107,7 +107,7 @@ class WalletService
     {
         $info = WalletHistory::query()
             ->with('user:id,full_name,email,uid,photo')
-            ->where('point_type','=','credit')
+            ->where('points_type','=','credit')
             ->where('gateway','like','%bkash%')
             ->latest()
             ->get();
