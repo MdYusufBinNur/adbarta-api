@@ -7,6 +7,7 @@ use App\Http\Resources\User\UserWalletHistoryResource;
 use App\Http\Resources\User\UserWalletResource;
 use App\Models\UserWallet;
 use App\Models\WalletHistory;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class WalletService
@@ -106,11 +107,27 @@ class WalletService
     public function allTopUpRecords(array $data): array
     {
         $info = WalletHistory::query()
-            ->with('user:id,full_name,email,uid,photo')
-            ->where('points_type','=','credit')
-            ->where('gateway','like','%bkash%')
+            ->with(['user' => function ($query) {
+                $query->select('id', 'full_name', 'email', 'uid', 'photo')
+                    ->whereNotNull('full_name'); // Exclude records with null full_name
+            }])
+            ->where('points_type', '=', 'credit')
+            ->where('gateway', 'like', '%bkash%')
             ->latest()
-            ->get();
-        return HelperAction::serviceResponse(false,'TopUp List', $info);
+            ->get()
+            ->map(function ($item) {
+                $item->created_at = Carbon::parse($item->created_at)->format('F j, Y, g:i A');
+                // Ensure full_name is not null or empty
+                $item->user = $item->user ? (object) [
+                    'id' => $item->user->id,
+                    'full_name' => $item->user->full_name ?: '-',
+                    'email' => $item->user->email,
+                    'uid' => $item->user->uid,
+                    'photo' => $item->user->photo,
+                ] : (object) ['full_name' => '-'];
+                return $item;
+            });
+
+        return HelperAction::serviceResponse(false, 'TopUp List', $info);
     }
 }
