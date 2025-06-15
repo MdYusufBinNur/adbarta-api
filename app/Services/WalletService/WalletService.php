@@ -14,7 +14,7 @@ class WalletService
 {
     public function wallet(array $data): array
     {
-        $wallet = UserWallet::query()->with('history.user','user')->where('user_id', '=', auth()->id())->firstOrFail();
+        $wallet = UserWallet::query()->with('history.user', 'user')->where('user_id', '=', auth()->id())->firstOrFail();
         return HelperAction::serviceResponse(false, 'Wallet history', new UserWalletResource($wallet));
     }
 
@@ -50,7 +50,7 @@ class WalletService
     {
         try {
             DB::beginTransaction();
-            $addWallet = WalletHistory::query()->where('points_type','=','credit')->findOrFail($walletID);
+            $addWallet = WalletHistory::query()->where('points_type', '=', 'credit')->findOrFail($walletID);
             $checkWallet = UserWallet::query()->findOrFail($addWallet->user_wallet_id);
             if ($data['status'] === 'Approve') {
                 $data['status'] = 'approved';
@@ -74,7 +74,7 @@ class WalletService
 
     public function getWalletHistory($data): array
     {
-        $wallet = WalletHistory::query()->with('user')->where('status','!=', 'cancelled')->latest()->get();
+        $wallet = WalletHistory::query()->with('user')->where('status', '!=', 'cancelled')->latest()->get();
         return HelperAction::serviceResponse(false, 'Wallet history', UserWalletHistoryResource::collection($wallet));
 
     }
@@ -97,7 +97,7 @@ class WalletService
                 'points_type' => 'credit',
             ]);
             DB::commit();
-            return HelperAction::serviceResponse(false, 'trxID submitted successfully',  new UserWalletResource($create->fresh('user')));
+            return HelperAction::serviceResponse(false, 'trxID submitted successfully', new UserWalletResource($create->fresh('user')));
         } catch (\Throwable $e) {
             DB::rollBack();
             return HelperAction::serviceResponse(true, $e->getMessage(), null);
@@ -108,8 +108,7 @@ class WalletService
     {
         $info = WalletHistory::query()
             ->with(['user' => function ($query) {
-                $query->select('id', 'full_name', 'email', 'uid', 'photo')
-                    ->whereNotNull('full_name'); // Exclude records with null full_name
+                $query->select('id', 'full_name', 'email', 'uid', 'photo');
             }])
             ->where('points_type', '=', 'credit')
             ->where('gateway', 'like', '%bkash%')
@@ -118,13 +117,13 @@ class WalletService
             ->map(function ($item) {
                 $item->created_at = Carbon::parse($item->created_at)->format('F j, Y, g:i A');
                 // Ensure full_name is not null or empty
-                $item->user = $item->user ? (object) [
+                $item->user = $item->user ? (object)[
                     'id' => $item->user->id,
-                    'full_name' => $item->user->full_name ?: '-',
+                    'full_name' => $item->user->full_name == 'null' ? '-' : $item->user->full_name,
                     'email' => $item->user->email,
                     'uid' => $item->user->uid,
                     'photo' => $item->user->photo,
-                ] : (object) ['full_name' => '-'];
+                ] : (object)['full_name' => '-'];
                 return $item;
             });
 
